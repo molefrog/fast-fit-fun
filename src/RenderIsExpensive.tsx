@@ -60,7 +60,8 @@ const Particle: React.FC<{
   amplitude: number;
   maxHeight: number;
   onDone: (id: string) => void;
-}> = ({ id, size, duration, delay, startX, startY, amplitude, maxHeight, onDone }) => {
+  children: string;
+}> = ({ id, size, duration, delay, startX, startY, amplitude, maxHeight, onDone, children }) => {
   useEffect(() => {
     const timeout = setTimeout(() => onDone(id), (duration + delay) * 1000);
     return () => clearTimeout(timeout);
@@ -76,13 +77,13 @@ const Particle: React.FC<{
       $amplitude={amplitude}
       $maxHeight={maxHeight}
     >
-      $
+      {children}
     </ParticleStyle>
   );
 };
 
 export const ParticleEmitter = forwardRef(
-  ({ targetRef }: { targetRef: RefObject<HTMLElement> }, ref) => {
+  ({ targetRef, symbol }: { targetRef: RefObject<HTMLElement>; symbol: string }, ref) => {
     const [particles, setParticles] = useState<Record<string, JSX.Element>>({});
     const timerRef = useRef<ReturnType<typeof setTimeout>>();
 
@@ -148,7 +149,9 @@ export const ParticleEmitter = forwardRef(
             amplitude={amplitude}
             maxHeight={maxHeight}
             onDone={removeParticle}
-          />
+          >
+            {symbol}
+          </Particle>
         );
 
         setParticles((prevParticles) => ({ ...prevParticles, [id]: particleElement }));
@@ -167,7 +170,13 @@ export const ParticleEmitter = forwardRef(
   }
 );
 
-export const RenderIsExpensive = ({ children }: { children: ReactElement }) => {
+export const RenderIsExpensive = ({
+  children,
+  symbol = "$",
+}: {
+  children: ReactElement;
+  symbol?: string;
+}) => {
   const firstRenderRef = useRef(true);
 
   const targetRef = useRef<HTMLElement>(null);
@@ -192,7 +201,10 @@ export const RenderIsExpensive = ({ children }: { children: ReactElement }) => {
     <>
       {childrenWithRef}
 
-      {createPortal(<ParticleEmitter ref={emitterRef} targetRef={targetRef} />, document.body)}
+      {createPortal(
+        <ParticleEmitter ref={emitterRef} targetRef={targetRef} symbol={symbol} />,
+        document.body
+      )}
     </>
   );
 };

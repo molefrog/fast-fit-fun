@@ -22,7 +22,7 @@ const RenderHighlightDemo = () => {
     <>
       <WorkingArea>
         <Centered>
-          <RenderIsExpensive>
+          <RenderIsExpensive symbol="😡">
             <ExpButton>
               <Button key={`btn` + counter} onClick={() => setCounter((i) => i + 1)}>
                 Counter: {counter}
