@@ -84,6 +84,7 @@ const Particle: React.FC<{
 export const ParticleEmitter = forwardRef(
   ({ targetRef }: { targetRef: RefObject<HTMLElement> }, ref) => {
     const [particles, setParticles] = useState<Record<string, JSX.Element>>({});
+    const timerRef = useRef<ReturnType<typeof setTimeout>>();
 
     const removeParticle = (id: string) => {
       setParticles((prevParticles) => {
@@ -94,9 +95,31 @@ export const ParticleEmitter = forwardRef(
     };
 
     const emitParticles = () => {
-      if (!(targetRef.current instanceof HTMLElement)) {
+      const target = targetRef.current;
+
+      if (!(target instanceof HTMLElement)) {
         return;
       }
+
+      // Add the animation to the target element
+      target.style.filter = "invert(1)";
+      target.style.outline = "3px dashed red";
+      target.style.outlineOffset = "4px";
+      target.style.transition = "filter 0s ease-out, outline 0s ease-out";
+
+      clearTimeout(timerRef.current);
+
+      setTimeout(() => {
+        target.style.transition = "filter 1s ease-out, outline 1s ease-out";
+        target.style.filter = "invert(0)";
+        target.style.outlineColor = "transparent";
+      }, 0);
+
+      timerRef.current = setTimeout(() => {
+        target.style.outline = "none";
+        target.style.filter = "none";
+        target.style.transition = "none";
+      }, 1000);
 
       const numParticles = Math.floor(randomBetween(4, 8));
       const buttonRect = targetRef.current?.getBoundingClientRect();

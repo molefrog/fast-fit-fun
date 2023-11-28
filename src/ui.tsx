@@ -130,6 +130,7 @@ const Btn = styled.button`
   padding: 14px 18px;
   box-shadow: inset 0px -2px 0px 4px #031298;
   text-shadow: 0px 1px 0px #333;
+  white-space: nowrap;
 
   > span {
     display: inline-block;

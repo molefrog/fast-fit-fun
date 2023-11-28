@@ -23,7 +23,11 @@ const RenderHighlightDemo = () => {
       <WorkingArea>
         <Centered>
           <RenderIsExpensive>
-            <Button onClick={() => setCounter((i) => i + 1)}>Counter: {counter}</Button>
+            <ExpButton>
+              <Button key={`btn` + counter} onClick={() => setCounter((i) => i + 1)}>
+                Counter: {counter}
+              </Button>
+            </ExpButton>
           </RenderIsExpensive>
         </Centered>
       </WorkingArea>
@@ -193,10 +197,14 @@ const PeopleConnected = styled(Squircle)`
   }
 `;
 
+const ExpButton = styled.div`
+  // padding: 16px;
+`;
+
 const App = ({ id }: { id: string }) => {
   return (
     <Container>
-      <MultiplayerDemo />
+      <RenderHighlightDemo />
     </Container>
   );
 };
