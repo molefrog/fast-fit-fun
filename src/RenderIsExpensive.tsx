@@ -94,6 +94,10 @@ export const ParticleEmitter = forwardRef(
     };
 
     const emitParticles = () => {
+      if (!(targetRef.current instanceof HTMLElement)) {
+        return;
+      }
+
       const numParticles = Math.floor(randomBetween(4, 8));
       const buttonRect = targetRef.current?.getBoundingClientRect();
 
@@ -141,8 +145,9 @@ export const ParticleEmitter = forwardRef(
 );
 
 export const RenderIsExpensive = ({ children }: { children: ReactElement }) => {
-  const buttonRef = useRef<HTMLElement>(null);
   const firstRenderRef = useRef(true);
+
+  const targetRef = useRef<HTMLElement>(null);
   const emitterRef = useRef<{ emitParticles: () => void }>(null);
 
   if (!isValidElement(children)) {
@@ -157,37 +162,14 @@ export const RenderIsExpensive = ({ children }: { children: ReactElement }) => {
     firstRenderRef.current = false;
   });
 
-  const childrenWithRef = cloneElement(children, { ref: buttonRef });
+  // @ts-ignore TODO
+  const childrenWithRef = cloneElement(children, { ref: targetRef });
 
   return (
     <>
       {childrenWithRef}
-      {createPortal(<ParticleEmitter ref={emitterRef} targetRef={buttonRef} />, document.body)}
+
+      {createPortal(<ParticleEmitter ref={emitterRef} targetRef={targetRef} />, document.body)}
     </>
   );
 };
-
-/**
- * DEMO
- */
-export const Demo: React.FC = () => {
-  const [counter, setCounter] = useState(0);
-
-  return (
-    <Container>
-      <RenderIsExpensive>
-        <Button onClick={() => setCounter((i) => i + 1)}>Increment {counter}</Button>
-      </RenderIsExpensive>
-    </Container>
-  );
-};
-
-const Container = styled.div`
-  position: relative;
-`;
-
-const Button = styled.button`
-  background: gray;
-
-  margin-top: 200px;
-`;

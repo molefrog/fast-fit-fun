@@ -40,7 +40,7 @@ export class Multiplayer {
       color: randomColor(),
       name: this.#name,
       x: 0,
-      y: 0
+      y: 0,
     };
 
     this.#emitter = createNanoEvents();
@@ -63,7 +63,7 @@ export class Multiplayer {
 
     this.connection = "connecting";
     this.#emitter.emit("connect", this.connection);
-    await delay(2000);
+    await delay(1000);
 
     this.connection = "online";
     this.#emitter.emit("connect", this.connection);
@@ -106,10 +106,7 @@ export class Multiplayer {
 
   on<K extends keyof Events>(event: K, handler: Events[K]): () => void {
     if (event === "update") {
-      return Multiplayer.globalEmitter.on(
-        "update",
-        handler as Events["update"]
-      );
+      return Multiplayer.globalEmitter.on("update", handler as Events["update"]);
     } else {
       return this.#emitter.on(event, handler);
     }

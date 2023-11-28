@@ -1,10 +1,11 @@
-import React, { useRef, useCallback } from "react";
+import React, { useRef, useCallback, useState, ComponentProps, forwardRef } from "react";
 import styled from "styled-components";
 
-import { Multiplayer } from "./Multiplayer"; // import your Multiplayer class
+import { Multiplayer } from "./Multiplayer";
 import { Cursor } from "./Cursor";
-import { Grid } from "./Grid";
+import { WorkingArea, Button, UserIcon } from "./ui";
 import { Squircle } from "@squircle-js/react";
+import { RenderIsExpensive } from "./RenderIsExpensive";
 
 import {
   useMultiplayer,
@@ -14,7 +15,23 @@ import {
   usePositionUpdates,
 } from "./hooks";
 
-const Client: React.FC = () => {
+const RenderHighlightDemo = () => {
+  const [counter, setCounter] = useState(0);
+
+  return (
+    <>
+      <WorkingArea>
+        <Centered>
+          <RenderIsExpensive>
+            <Button onClick={() => setCounter((i) => i + 1)}>Counter: {counter}</Button>
+          </RenderIsExpensive>
+        </Centered>
+      </WorkingArea>
+    </>
+  );
+};
+
+const MultiplayerDemo = () => {
   const client = useMultiplayer();
   const connection = useConnectionStatus(client);
 
@@ -23,9 +40,7 @@ const Client: React.FC = () => {
   }, [client]);
 
   return (
-    <Square>
-      <Grid width={480} />
-
+    <WorkingArea>
       {connection === "connecting" && <LoadingLabel>Connecting...</LoadingLabel>}
 
       {connection === "disconnecting" && <LoadingLabel>Disconnecting...</LoadingLabel>}
@@ -38,13 +53,11 @@ const Client: React.FC = () => {
       )}
 
       {connection === "offline" && (
-        <Squircle cornerRadius={12} cornerSmoothing={1} asChild>
-          <ConnectButton onClick={connect}>
-            <span>Connect</span>
-          </ConnectButton>
-        </Squircle>
+        <Centered>
+          <Button onClick={connect}>Connect</Button>
+        </Centered>
       )}
-    </Square>
+    </WorkingArea>
   );
 };
 
@@ -63,15 +76,11 @@ const Status = ({ client }: { client: Multiplayer }) => {
 
   return (
     <StatusBar>
-      <CurrentPlayer
-        $color={client.me.color}
-        cornerRadius={12}
-        cornerSmoothing={1}
-        onClick={rename}
-        key={myName}
-      >
-        {myName}
-      </CurrentPlayer>
+      <RenderIsExpensive>
+        <CurrentPlayer $color={client.me.color} onClick={rename} key={myName}>
+          {myName}
+        </CurrentPlayer>
+      </RenderIsExpensive>
 
       <PeopleConnected onClick={disconnect} cornerRadius={12} cornerSmoothing={1}>
         <UserIcon />
@@ -107,22 +116,19 @@ const Canvas = ({ client }: { client: Multiplayer }) => {
   );
 };
 
-const Container = styled.div`
-  font-family: SFRounded, ui-rounded, "SF Pro Rounded", system-ui, "Helvetica Neue", Arial,
-    Helvetica, sans-serif;
-`;
+const Container = styled.div``;
 
-const Square = styled.div`
-  --canvas-gap: 16px;
-
-  width: 480px;
-  height: 480px;
-  position: relative;
+const Centered = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 `;
 
 const CanvasContainer = styled.div`
-  position: absolute;
-  inset: var(--canvas-gap) var(--canvas-gap) var(--canvas-gap) var(--canvas-gap);
+  width: 100%;
+  height: 100%;
+  position: relative;
   overflow: hidden;
   cursor: none;
 `;
@@ -135,49 +141,31 @@ const LoadingLabel = styled.div`
   transform: translate(-50%, -50%);
   font-size: 28px;
   color: black;
-
   text-shadow: 0px 0px 4px white;
 `;
 
 const StatusBar = styled.div`
   position: absolute;
 
-  top: 24px;
-  right: 24px;
+  top: 16px;
+  right: 16px;
   display: flex;
   flex-flow: row nowrap;
   gap: 8px;
   cursor: pointer;
 `;
 
-const ConnectButton = styled.button`
-  position: absolute;
-  font-weight: 700;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 28px;
-  color: white;
-  cursor: pointer;
-
-  background: blue;
-  padding: 14px 18px;
-  box-shadow: inset 0px -2px 0px 4px #031298;
-  text-shadow: 0px 1px 0px #333;
-
-  > span {
-    display: inline-block;
+const CurrentPlayer = forwardRef<HTMLDivElement, ComponentProps<"div"> & { $color: string }>(
+  (props, ref) => {
+    return (
+      <Squircle cornerRadius={12} cornerSmoothing={1} asChild>
+        <CurrentPlayerDiv ref={ref} {...props}></CurrentPlayerDiv>
+      </Squircle>
+    );
   }
+);
 
-  &:active {
-    box-shadow: none;
-    > span {
-      transform: translateY(2px);
-    }
-  }
-`;
-
-const CurrentPlayer = styled(Squircle)<{ $color: string }>`
+const CurrentPlayerDiv = styled.div<{ $color: string }>`
   font-size: 22px;
   font-weight: 600;
   display: flex;
@@ -208,27 +196,8 @@ const PeopleConnected = styled(Squircle)`
 const App = ({ id }: { id: string }) => {
   return (
     <Container>
-      <Client />
+      <MultiplayerDemo />
     </Container>
-  );
-};
-
-const UserIcon = () => {
-  return (
-    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M16 3C12.6863 3 10 5.68629 10 9C10 12.3137 12.6863 15 16 15C19.3137 15 22 12.3137 22 9C22 5.68629 19.3137 3 16 3Z"
-        fill="currentColor"
-      />
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M13 16.9297C11.1435 16.9297 9.36301 17.6672 8.05025 18.9799C6.7375 20.2927 6 22.0732 6 23.9297C6 24.7253 6.31607 25.4884 6.87868 26.051C7.44129 26.6136 8.20435 26.9297 9 26.9297H23C23.7957 26.9297 24.5587 26.6136 25.1213 26.051C25.6839 25.4884 26 24.7253 26 23.9297C26 22.0732 25.2625 20.2927 23.9497 18.9799C22.637 17.6672 20.8565 16.9297 19 16.9297H13Z"
-        fill="currentColor"
-      />
-    </svg>
   );
 };
 
