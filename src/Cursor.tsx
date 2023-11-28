@@ -1,4 +1,3 @@
-import React, { useEffect, useState, useRef } from "react";
 import styled from "styled-components";
 import { Squircle } from "@squircle-js/react";
 import { Player } from "./Multiplayer"; // import your Multiplayer class
@@ -38,7 +37,7 @@ const CursorDiv = styled.div.attrs<{
   $isMe: boolean;
 }>(({ $top, $left }) => {
   return {
-    style: { transform: `translate(${$left - tilt}px, ${$top - tilt}px)` }
+    style: { transform: `translate(${$left - tilt}px, ${$top - tilt}px)` },
   };
 })`
   position: absolute;

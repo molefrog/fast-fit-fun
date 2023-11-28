@@ -1,13 +1,4 @@
-import React, {
-  useEffect,
-  useState,
-  useRef,
-  useSyncExternalStore,
-  useCallback,
-  useLayoutEffect,
-  ComponentProps
-} from "react";
-import styled from "styled-components";
+import { useRef, useLayoutEffect, ComponentProps } from "react";
 import rough from "roughjs";
 
 type GridProps = ComponentProps<"svg"> & {
@@ -34,7 +25,7 @@ export const Grid = ({ width, height = width, ...props }: GridProps) => {
         fillStyle: "zigzag",
         stroke: "none",
         hachureGap: 28,
-        fillWeight: 20
+        fillWeight: 20,
       })
     );
 
@@ -46,7 +37,7 @@ export const Grid = ({ width, height = width, ...props }: GridProps) => {
         hachureAngle: 0,
         roughness: 2,
         strokeWidth: 3,
-        hachureGap: 60
+        hachureGap: 60,
       })
     );
   }, []);

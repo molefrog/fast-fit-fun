@@ -1,11 +1,4 @@
-import React, {
-  useEffect,
-  useState,
-  useRef,
-  useSyncExternalStore,
-  useCallback,
-  useLayoutEffect
-} from "react";
+import React, { useRef, useCallback } from "react";
 import styled from "styled-components";
 
 import { Multiplayer } from "./Multiplayer"; // import your Multiplayer class
@@ -18,7 +11,7 @@ import {
   useConnectionStatus,
   usePlayerName,
   usePeopleConnected,
-  usePositionUpdates
+  usePositionUpdates,
 } from "./hooks";
 
 const Client: React.FC = () => {
@@ -33,13 +26,9 @@ const Client: React.FC = () => {
     <Square>
       <Grid width={480} />
 
-      {connection === "connecting" && (
-        <LoadingLabel>Connecting...</LoadingLabel>
-      )}
+      {connection === "connecting" && <LoadingLabel>Connecting...</LoadingLabel>}
 
-      {connection === "disconnecting" && (
-        <LoadingLabel>Disconnecting...</LoadingLabel>
-      )}
+      {connection === "disconnecting" && <LoadingLabel>Disconnecting...</LoadingLabel>}
 
       {connection === "online" && (
         <>
@@ -84,11 +73,7 @@ const Status = ({ client }: { client: Multiplayer }) => {
         {myName}
       </CurrentPlayer>
 
-      <PeopleConnected
-        onClick={disconnect}
-        cornerRadius={12}
-        cornerSmoothing={1}
-      >
+      <PeopleConnected onClick={disconnect} cornerRadius={12} cornerSmoothing={1}>
         <UserIcon />
 
         {peopleOnline}
@@ -109,9 +94,7 @@ const Canvas = ({ client }: { client: Multiplayer }) => {
 
   usePositionUpdates(client);
 
-  const otherPlayers = Object.values(client.players).filter(
-    (p) => p.name !== client.name
-  );
+  const otherPlayers = Object.values(client.players).filter((p) => p.name !== client.name);
 
   return (
     <CanvasContainer ref={squareRef} onMouseMove={handleMouseMove}>
@@ -125,8 +108,8 @@ const Canvas = ({ client }: { client: Multiplayer }) => {
 };
 
 const Container = styled.div`
-  font-family: SFRounded, ui-rounded, "SF Pro Rounded", system-ui,
-    "Helvetica Neue", Arial, Helvetica, sans-serif;
+  font-family: SFRounded, ui-rounded, "SF Pro Rounded", system-ui, "Helvetica Neue", Arial,
+    Helvetica, sans-serif;
 `;
 
 const Square = styled.div`
@@ -232,13 +215,7 @@ const App = ({ id }: { id: string }) => {
 
 const UserIcon = () => {
   return (
-    <svg
-      width="32"
-      height="32"
-      viewBox="0 0 32 32"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         fillRule="evenodd"
         clipRule="evenodd"

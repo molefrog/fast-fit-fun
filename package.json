@@ -1,42 +1,33 @@
 {
-  "name": "multiplayer-demo",
-  "version": "1.0.0",
-  "description": "",
-  "keywords": [],
-  "main": "src/index.tsx",
+  "name": "fff",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
+  },
   "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "@squircle-js/react": "1.2.0",
-    "loader-utils": "3.2.1",
-    "mitt": "3.0.1",
     "nanoevents": "9.0.0",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "react-scripts": "5.0.1",
     "roughjs": "4.6.6",
     "styled-components": "6.1.1",
-    "the-new-css-reset": "1.11.2",
-    "typescript": "5.3.2"
+    "the-new-css-reset": "1.11.2"
   },
   "devDependencies": {
-    "@types/react": "18.2.37",
-    "@types/react-dom": "18.2.15",
-    "@typescript-eslint/eslint-plugin": "^6.9.1",
-    "@typescript-eslint/parser": "^6.9.1",
-    "eslint": "^8.52.0",
-    "eslint-plugin-react": "^7.33.2",
+    "@types/react": "^18.2.37",
+    "@types/react-dom": "^18.2.15",
+    "@typescript-eslint/eslint-plugin": "^6.10.0",
+    "@typescript-eslint/parser": "^6.10.0",
+    "@vitejs/plugin-react-swc": "^3.5.0",
+    "eslint": "^8.53.0",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-react-refresh": "^0.4.4"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
-  },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ]
+    "eslint-plugin-react-refresh": "^0.4.4",
+    "typescript": "^5.2.2",
+    "vite": "^5.0.0"
+  }
 }
