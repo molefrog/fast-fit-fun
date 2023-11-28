@@ -65,13 +65,8 @@ const MultiplayerDemo = () => {
   );
 };
 
-const Status = ({ client }: { client: Multiplayer }) => {
+const MyPlayerName = React.memo(({ client }: { client: Multiplayer }) => {
   const myName = usePlayerName(client);
-  const peopleOnline = usePeopleConnected(client);
-
-  const disconnect = useCallback(() => {
-    client.disconnect();
-  }, [client]);
 
   const rename = useCallback(() => {
     const newName = prompt("Rename player", myName) || "Anon";
@@ -79,12 +74,24 @@ const Status = ({ client }: { client: Multiplayer }) => {
   }, [client, myName]);
 
   return (
+    <RenderIsExpensive>
+      <CurrentPlayer $color={client.me.color} onClick={rename} key={myName}>
+        {myName}
+      </CurrentPlayer>
+    </RenderIsExpensive>
+  );
+});
+
+const Status = ({ client }: { client: Multiplayer }) => {
+  const peopleOnline = usePeopleConnected(client);
+
+  const disconnect = useCallback(() => {
+    client.disconnect();
+  }, [client]);
+
+  return (
     <StatusBar>
-      <RenderIsExpensive>
-        <CurrentPlayer $color={client.me.color} onClick={rename} key={myName}>
-          {myName}
-        </CurrentPlayer>
-      </RenderIsExpensive>
+      <MyPlayerName client={client} />
 
       <PeopleConnected onClick={disconnect} cornerRadius={12} cornerSmoothing={1}>
         <UserIcon />
