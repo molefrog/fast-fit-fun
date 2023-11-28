@@ -1,6 +1,9 @@
 @import "the-new-css-reset/css/reset.css";
 
 body {
+  font-family: SFRounded, ui-rounded, "SF Pro Rounded", system-ui, "Helvetica Neue", Arial,
+    Helvetica, sans-serif;
+
   padding: 80px 16px;
   display: flex;
   flex-flow: row wrap;
