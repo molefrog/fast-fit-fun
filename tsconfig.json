@@ -1,0 +1,17 @@
+{
+    "include": [
+        "./src/**/*"
+    ],
+    "compilerOptions": {
+        "experimentalDecorators": true,
+        "target": "es2020",
+        "moduleResolution": "bundler",
+        "strict": true,
+        "esModuleInterop": true,
+        "lib": [
+            "dom",
+            "es2020"
+        ],
+        "jsx": "react-jsx"
+    }
+}
