@@ -16,6 +16,15 @@ import {
 } from "../hooks";
 
 export const Demo = () => {
+  return (
+    <>
+      <MultiplayerCursors />
+      <MultiplayerCursors />
+    </>
+  );
+};
+
+const MultiplayerCursors = () => {
   const client = useMultiplayer();
   const connection = useConnectionStatus(client);
 
@@ -107,6 +116,18 @@ const Canvas = ({ client }: { client: Multiplayer }) => {
   );
 };
 
+const CurrentPlayer = forwardRef<HTMLDivElement, ComponentProps<"div"> & { $color: string }>(
+  ({ children, ...props }, ref) => {
+    return (
+      <CurrentPlayerDiv ref={ref} {...props}>
+        <Squircle cornerRadius={12} cornerSmoothing={1}>
+          {children}
+        </Squircle>
+      </CurrentPlayerDiv>
+    );
+  }
+);
+
 const CanvasContainer = styled.div`
   width: 100%;
   height: 100%;
@@ -137,27 +158,19 @@ const StatusBar = styled.div`
   cursor: pointer;
 `;
 
-const CurrentPlayer = forwardRef<HTMLDivElement, ComponentProps<"div"> & { $color: string }>(
-  (props, ref) => {
-    return (
-      <Squircle cornerRadius={12} cornerSmoothing={1} asChild>
-        <CurrentPlayerDiv ref={ref} {...props}></CurrentPlayerDiv>
-      </Squircle>
-    );
-  }
-);
-
 const CurrentPlayerDiv = styled.div<{ $color: string }>`
-  font-size: 22px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
+  > div {
+    background: ${(props) => props.$color};
+    display: flex;
+    align-items: center;
+    color: white;
+    font-size: 22px;
+    font-weight: 600;
+    height: 44px;
 
-  text-shadow: 0px 1px 0px #333;
-  gap: 8px;
-  background: ${(props) => props.$color};
-  color: white;
-  padding: 6px 14px;
+    padding: 6px 14px;
+    text-shadow: 0px 1px 0px #333;
+  }
 `;
 
 const PeopleConnected = styled(Squircle)`

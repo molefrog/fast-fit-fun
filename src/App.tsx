@@ -6,7 +6,10 @@ import { Demo as MultiplayerDemo } from "./demo/multiplayer";
 
 import { Route, Switch } from "wouter";
 
-const Container = styled.div``;
+const Container = styled.div`
+  display: flex;
+  gap: 16px;
+`;
 
 const App = () => {
   return (

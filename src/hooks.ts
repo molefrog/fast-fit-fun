@@ -69,11 +69,28 @@ const useSubscribeTo = (client: Multiplayer, event: keyof Events) => {
   return subscribe;
 };
 
-// current player's name
-export const usePlayerName = (client: Multiplayer) => {
+/**
+ * A. Get player's name using `useState` and `useEffect` hooks
+ */
+const usePlayerNameStateAndEffect = (client: Multiplayer) => {
+  const [name, setName] = useState(() => client.name);
+
+  useEffect(() => {
+    return client.on("rename", () => setName(client.name));
+  }, [client]);
+
+  return name;
+};
+
+/**
+ * B. Get player's name using `useSyncExternalStore` hook
+ */
+const usePlayerNameSES = (client: Multiplayer) => {
   const subscribe = useSubscribeTo(client, "rename");
   return useSyncExternalStore(subscribe, () => client.name);
 };
+
+export const usePlayerName = usePlayerNameStateAndEffect;
 
 export const useConnectionStatus = (client: Multiplayer) => {
   const subscribe = useSubscribeTo(client, "connect");
