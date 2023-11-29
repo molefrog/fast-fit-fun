@@ -6,5 +6,5 @@ import "./main.css";
 document.querySelectorAll(".react-app").forEach((element) => {
   const root = ReactDOM.createRoot(element);
 
-  root.render(<App id={element.id} />);
+  root.render(<App />);
 });

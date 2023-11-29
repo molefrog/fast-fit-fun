@@ -5,14 +5,16 @@ import styled from "styled-components";
 
 export const Button = forwardRef<HTMLButtonElement, ComponentProps<"button">>(
   ({ children, ...props }, ref) => {
-    const key = typeof children === "string" ? String(children) : "";
+    const key = useRef(0); // recalculate squircle
 
     return (
-      <Squircle key={key} cornerRadius={12} cornerSmoothing={1} asChild>
-        <Btn ref={ref} {...props}>
-          <span>{children}</span>
-        </Btn>
-      </Squircle>
+      <Button_ {...props} ref={ref}>
+        <Squircle key={key.current++} cornerRadius={12} cornerSmoothing={1} asChild>
+          <ButtonMasked>
+            <span>{children}</span>
+          </ButtonMasked>
+        </Squircle>
+      </Button_>
     );
   }
 );
@@ -100,6 +102,23 @@ export const UserIcon = () => {
   );
 };
 
+export const BigLabel = styled.div`
+  font-size: 28px;
+  font-weight: bold;
+  text-align: center;
+  border-radius: 8px;
+`;
+
+export const Centered = styled.div`
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  justify-content: center;
+  gap: 52px;
+  width: 100%;
+  height: 100%;
+`;
+
 const Square = styled.div<{ $size: number; $gap: number }>`
   width: ${(props) => props.$size}px;
   height: ${(props) => props.$size}px;
@@ -119,7 +138,11 @@ const SVG = styled.svg`
   pointer-events: none;
 `;
 
-const Btn = styled.button`
+const Button_ = styled.button`
+  display: inline-block;
+`;
+
+const ButtonMasked = styled.div`
   font-weight: 700;
   font-size: 28px;
   color: white;
