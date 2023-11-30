@@ -7,8 +7,7 @@ import { Demo as MultiplayerDemo } from "./demo/multiplayer";
 import { useMultiplayerB, useMultiplayerC } from "./hooks";
 
 import { Route, Switch, useLocation } from "wouter";
-import { useCallback, useEffect, useRef } from "react";
-import React from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const Container = styled.div`
   display: flex;
@@ -52,6 +51,10 @@ const App = () => {
           <Route path="/rename-player-multi">
             <MultiplayerDemo nOfInstances={1} useMultiplayerHook={useMultiplayerC} />
           </Route>
+
+          <Route path="/use-event">
+            <MultiplayerDemo nOfInstances={1} useMultiplayerHook={useMultiplayerC} />
+          </Route>
         </Switch>
       </Container>
     </>
@@ -64,12 +67,19 @@ const DEMOS = [
   "/singleplayer",
   "/singleplayer-double",
   "/multiplayer",
+  "/use-event?comments",
+  "/use-event?comments&add-comment=use-event",
   "/rename-player",
   "/rename-player-multi?name=useSES",
 ];
 
 const KeyboardNavigation = () => {
-  const indexRef = useRef(0);
+  const [startIndex] = useState(() => {
+    const index = DEMOS.indexOf(window.location.pathname + window.location.search);
+    return index === -1 ? 0 : index;
+  });
+
+  const indexRef = useRef(startIndex);
   const [, navigate] = useLocation();
 
   const handleKeyDown = useCallback((event: KeyboardEvent) => {

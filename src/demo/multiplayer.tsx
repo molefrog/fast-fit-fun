@@ -1,17 +1,10 @@
-import React, {
-  useRef,
-  useCallback,
-  ComponentProps,
-  forwardRef,
-  useState,
-  useMemo,
-  useEffect,
-} from "react";
+import React, { useRef, useCallback, ComponentProps, forwardRef, useEffect } from "react";
+import useEvent from "react-use-event-hook";
 import styled from "styled-components";
 
 import { Multiplayer } from "../Multiplayer";
 import { Cursor } from "../Cursor";
-import { WorkingArea, Button, UserIcon, Centered } from "../ui";
+import { WorkingArea, Button, UserIcon, Centered, CommentIcon } from "../ui";
 import { Squircle } from "@squircle-js/react";
 import { RenderIsExpensive } from "../RenderIsExpensive";
 
@@ -79,6 +72,18 @@ const MultiplayerCursors = (props: Omit<DemoProps, "nOfInstances">) => {
   );
 };
 
+const Comments = React.memo(({ onComment }: { onComment: () => void }) => {
+  return (
+    <RenderIsExpensive>
+      <CommentsContainer>
+        <CommentButton onClick={onComment}>
+          <CommentIcon />
+        </CommentButton>
+      </CommentsContainer>
+    </RenderIsExpensive>
+  );
+});
+
 const Status = ({ client }: { client: Multiplayer }) => {
   const peopleOnline = usePeopleConnected(client);
 
@@ -121,6 +126,7 @@ const MyPlayerName = React.memo(({ client }: { client: Multiplayer }) => {
 });
 
 const Canvas = ({ client }: { client: Multiplayer }) => {
+  const params = new URLSearchParams(useSearch());
   const squareRef = useRef<HTMLDivElement>(null);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -134,6 +140,20 @@ const Canvas = ({ client }: { client: Multiplayer }) => {
 
   const otherPlayers = Object.values(client.players).filter((p) => p.name !== client.name);
 
+  // write last coordinates here to simulate addComment method
+  const someWork = useRef([0, 0]);
+
+  const addCommentMemo = useCallback(() => {
+    someWork.current = [client.me.x, client.me.y];
+  }, [client.me.x, client.me.y]);
+
+  const addCommentUseEvent = useEvent(() => {
+    someWork.current = [client.me.x, client.me.y];
+  });
+
+  const addComment =
+    params.get("add-comment") === "use-event" ? addCommentUseEvent : addCommentMemo;
+
   return (
     <CanvasContainer ref={squareRef} onMouseMove={handleMouseMove}>
       {otherPlayers.map((p) => (
@@ -141,6 +161,8 @@ const Canvas = ({ client }: { client: Multiplayer }) => {
       ))}
 
       <Cursor player={client.players[client.name]} isMe />
+
+      {params.has("comments") && <Comments onComment={addComment} />}
     </CanvasContainer>
   );
 };
@@ -163,6 +185,28 @@ const CanvasContainer = styled.div`
   position: relative;
   overflow: hidden;
   cursor: none;
+`;
+
+const CommentsContainer = styled.div`
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  font-size: 14px;
+  color: white;
+  text-shadow: 0px 0px 4px black;
+`;
+
+const CommentButton = styled(Squircle).attrs({ cornerRadius: 12, cornerSmoothing: 1 })`
+  width: 64px;
+  height: 64px;
+  background: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  > svg {
+    width: 34px;
+  }
 `;
 
 const LoadingLabel = styled.div`
