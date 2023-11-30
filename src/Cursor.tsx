@@ -1,19 +1,31 @@
 import styled from "styled-components";
 import { Squircle } from "@squircle-js/react";
 import { Player } from "./Multiplayer"; // import your Multiplayer class
+import React from "react";
+import { RenderIsExpensive } from "./RenderIsExpensive";
 
 interface CursorProps {
   player: Player;
   isMe?: boolean;
 }
 
+const PlayerName = React.memo(({ color, name }: { color: string; name: string }) => {
+  return (
+    <RenderIsExpensive>
+      <LabelWrap>
+        <Label key={name} $color={color} cornerRadius={8} cornerSmoothing={1}>
+          {name || "Unknown"}
+        </Label>
+      </LabelWrap>
+    </RenderIsExpensive>
+  );
+});
+
 export const Cursor = ({ player, isMe = false }: CursorProps) => {
   return (
     <CursorDiv $top={player.y} $left={player.x} $isMe={isMe}>
       <HandIcon />
-      <Label $color={player.color} cornerRadius={8} cornerSmoothing={1}>
-        {player.name || "Unknown"}
-      </Label>
+      <PlayerName color={player.color} name={player.name} />
     </CursorDiv>
   );
 };
@@ -52,12 +64,15 @@ const CursorDiv = styled.div.attrs<{
   ${(props) => (props.$isMe ? "color: black;" : "color: #999;")}
 `;
 
-const Label = styled(Squircle)<{ $color: string }>`
-  background-color: ${(props) => props.$color};
-  font-weight: 500;
+const LabelWrap = styled.div`
   position: absolute;
   top: 32px;
   left: 16px;
+`;
+
+const Label = styled(Squircle)<{ $color: string }>`
+  background-color: ${(props) => props.$color};
+  font-weight: 500;
   height: 32px;
   display: flex;
   align-items: center;

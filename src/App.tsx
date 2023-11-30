@@ -8,6 +8,7 @@ import { useMultiplayerB, useMultiplayerC } from "./hooks";
 
 import { Route, Switch, useLocation } from "wouter";
 import { useCallback, useEffect, useRef } from "react";
+import React from "react";
 
 const Container = styled.div`
   display: flex;
@@ -37,7 +38,19 @@ const App = () => {
           </Route>
 
           <Route path="/multiplayer">
-            <MultiplayerDemo nOfInstances={2} useMultiplayerHook={useMultiplayerC} />
+            <MultiplayerDemo
+              key="multiplayer"
+              nOfInstances={2}
+              useMultiplayerHook={useMultiplayerC}
+            />
+          </Route>
+
+          <Route path="/rename-player">
+            <MultiplayerDemo nOfInstances={1} useMultiplayerHook={useMultiplayerC} />
+          </Route>
+
+          <Route path="/rename-player-multi">
+            <MultiplayerDemo nOfInstances={1} useMultiplayerHook={useMultiplayerC} />
           </Route>
         </Switch>
       </Container>
@@ -51,7 +64,8 @@ const DEMOS = [
   "/singleplayer",
   "/singleplayer-double",
   "/multiplayer",
-  "/multiplayer?name=useSES",
+  "/rename-player",
+  "/rename-player-multi?name=useSES",
 ];
 
 const KeyboardNavigation = () => {

@@ -30,7 +30,7 @@ interface DemoProps {
   useMultiplayerHook: () => Multiplayer;
 }
 
-export const Demo = React.memo(({ nOfInstances, ...props }: DemoProps) => {
+export const Demo = ({ nOfInstances, ...props }: DemoProps) => {
   const instances = Array.from({ length: nOfInstances }).map(() => nanoid());
   const search = useSearch(); // re-mount when search string changes
 
@@ -41,7 +41,7 @@ export const Demo = React.memo(({ nOfInstances, ...props }: DemoProps) => {
       ))}
     </>
   );
-});
+};
 
 const MultiplayerCursors = (props: Omit<DemoProps, "nOfInstances">) => {
   const client = props.useMultiplayerHook();
