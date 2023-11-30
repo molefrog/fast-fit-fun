@@ -1,4 +1,12 @@
-import React, { useRef, useCallback, ComponentProps, forwardRef } from "react";
+import React, {
+  useRef,
+  useCallback,
+  ComponentProps,
+  forwardRef,
+  useState,
+  useMemo,
+  useEffect,
+} from "react";
 import styled from "styled-components";
 
 import { Multiplayer } from "../Multiplayer";
@@ -8,25 +16,42 @@ import { Squircle } from "@squircle-js/react";
 import { RenderIsExpensive } from "../RenderIsExpensive";
 
 import {
-  useMultiplayer,
   useConnectionStatus,
-  usePlayerName,
   usePeopleConnected,
   usePositionUpdates,
+  usePlayerNameSES,
+  usePlayerNameStateAndEffect,
 } from "../hooks";
+import { nanoid } from "nanoid";
+import { useSearch } from "wouter";
 
-export const Demo = () => {
+interface DemoProps {
+  nOfInstances: number;
+  useMultiplayerHook: () => Multiplayer;
+}
+
+export const Demo = React.memo(({ nOfInstances, ...props }: DemoProps) => {
+  const instances = Array.from({ length: nOfInstances }).map(() => nanoid());
+  const search = useSearch(); // re-mount when search string changes
+
   return (
     <>
-      <MultiplayerCursors />
-      <MultiplayerCursors />
+      {instances.map((id) => (
+        <MultiplayerCursors key={id + search} {...props} />
+      ))}
     </>
   );
-};
+});
 
-const MultiplayerCursors = () => {
-  const client = useMultiplayer();
+const MultiplayerCursors = (props: Omit<DemoProps, "nOfInstances">) => {
+  const client = props.useMultiplayerHook();
   const connection = useConnectionStatus(client);
+
+  useEffect(() => {
+    return () => {
+      client.disconnect();
+    };
+  }, [client]);
 
   const connect = useCallback(() => {
     client.connect();
@@ -54,23 +79,6 @@ const MultiplayerCursors = () => {
   );
 };
 
-const MyPlayerName = React.memo(({ client }: { client: Multiplayer }) => {
-  const myName = usePlayerName(client);
-
-  const rename = useCallback(() => {
-    const newName = prompt("Rename player", myName) || "Anon";
-    client.name = newName;
-  }, [client, myName]);
-
-  return (
-    <RenderIsExpensive>
-      <CurrentPlayer $color={client.me.color} onClick={rename} key={myName}>
-        {myName}
-      </CurrentPlayer>
-    </RenderIsExpensive>
-  );
-});
-
 const Status = ({ client }: { client: Multiplayer }) => {
   const peopleOnline = usePeopleConnected(client);
 
@@ -90,6 +98,27 @@ const Status = ({ client }: { client: Multiplayer }) => {
     </StatusBar>
   );
 };
+
+const MyPlayerName = React.memo(({ client }: { client: Multiplayer }) => {
+  const params = new URLSearchParams(useSearch());
+
+  const hook = params.get("name") === "useSES" ? usePlayerNameSES : usePlayerNameStateAndEffect;
+
+  const myName = hook(client);
+
+  const rename = useCallback(() => {
+    const newName = prompt("Rename player", myName) || "Anon";
+    client.name = newName;
+  }, [client, myName]);
+
+  return (
+    <RenderIsExpensive>
+      <CurrentPlayer $color={client.me.color} onClick={rename} key={myName}>
+        {myName}
+      </CurrentPlayer>
+    </RenderIsExpensive>
+  );
+});
 
 const Canvas = ({ client }: { client: Multiplayer }) => {
   const squareRef = useRef<HTMLDivElement>(null);

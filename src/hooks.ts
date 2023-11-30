@@ -53,8 +53,6 @@ export const useMultiplayerD = () => {
   return client;
 };
 
-export const useMultiplayer = useMultiplayerC;
-
 // returns stable reference to subscription function for the given event
 // to be used in `useSyncExternalStore`
 const useSubscribeTo = (client: Multiplayer, event: keyof Events) => {
@@ -72,7 +70,7 @@ const useSubscribeTo = (client: Multiplayer, event: keyof Events) => {
 /**
  * A. Get player's name using `useState` and `useEffect` hooks
  */
-const usePlayerNameStateAndEffect = (client: Multiplayer) => {
+export const usePlayerNameStateAndEffect = (client: Multiplayer) => {
   const [name, setName] = useState(() => client.name);
 
   useEffect(() => {
@@ -85,12 +83,10 @@ const usePlayerNameStateAndEffect = (client: Multiplayer) => {
 /**
  * B. Get player's name using `useSyncExternalStore` hook
  */
-const usePlayerNameSES = (client: Multiplayer) => {
+export const usePlayerNameSES = (client: Multiplayer) => {
   const subscribe = useSubscribeTo(client, "rename");
   return useSyncExternalStore(subscribe, () => client.name);
 };
-
-export const usePlayerName = usePlayerNameStateAndEffect;
 
 export const useConnectionStatus = (client: Multiplayer) => {
   const subscribe = useSubscribeTo(client, "connect");
