@@ -1,27 +1,28 @@
+import React from "react";
 import { useCallback, useState } from "react";
 import { shuffle } from "lodash";
 
 import { WorkingArea, Button, BigLabel, Centered } from "../ui";
 import { RenderIsExpensive } from "../RenderIsExpensive";
 import { CAT_NAMES } from "../meow";
-import React from "react";
+import { useSearch } from "wouter";
 
 const MY_CATS = ["Bambooni", "Waffle"];
 
-const IsThisMyCat =
-  /*React.memo(*/
-  ({ isIt }: { isIt: boolean }) => {
-    const label = isIt ? "That's my cat!" : "This is NOT my cat...";
+const IsThisMyCat = ({ isIt }: { isIt: boolean }) => {
+  const label = isIt ? "That's my cat!" : "This is NOT my cat...";
 
-    return (
-      <RenderIsExpensive>
-        <BigLabel>{label}</BigLabel>
-      </RenderIsExpensive>
-    );
-  };
-/*);*/
+  return (
+    <RenderIsExpensive>
+      <BigLabel>{label}</BigLabel>
+    </RenderIsExpensive>
+  );
+};
+
+const IsThisMyCatMemoized = React.memo(IsThisMyCat);
 
 export const Demo = () => {
+  const params = new URLSearchParams(useSearch());
   const [i, setI] = useState(0);
 
   const [catNames] = useState(() => {
@@ -32,6 +33,8 @@ export const Demo = () => {
     setI((i) => (i + 1) % catNames.length);
   }, [catNames]);
 
+  const ResultComponent = params.has("memo") ? IsThisMyCatMemoized : IsThisMyCat;
+
   return (
     <WorkingArea>
       <Centered>
@@ -39,7 +42,7 @@ export const Demo = () => {
           <Button onClick={next}>{catNames[i]}</Button>
         </RenderIsExpensive>
 
-        <IsThisMyCat isIt={MY_CATS.includes(catNames[i])} />
+        <ResultComponent isIt={MY_CATS.includes(catNames[i])} />
       </Centered>
     </WorkingArea>
   );

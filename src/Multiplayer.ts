@@ -63,11 +63,14 @@ export class Multiplayer {
 
     this.connection = "connecting";
     this.#emitter.emit("connect", this.connection);
-    await delay(1000);
+    await delay(500);
 
-    this.connection = "online";
-    this.#emitter.emit("connect", this.connection);
-    this.sync();
+    // don't connect if we've disconnected in the meantime
+    if (this.connection === "connecting") {
+      this.connection = "online";
+      this.#emitter.emit("connect", this.connection);
+      this.sync();
+    }
   }
 
   get name() {
@@ -116,7 +119,7 @@ export class Multiplayer {
     this.connection = "disconnecting";
     this.#emitter.emit("connect", this.connection);
 
-    await delay(800);
+    await delay(250);
 
     this.connection = "offline";
     this.#emitter.emit("connect", this.connection);

@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
-import { Demo as CatDemo } from "./demo/is-this-my-cat";
 import { Demo as ExpensiveRenderDemo } from "./demo/expensive-render";
+import { Demo as CatDemo } from "./demo/is-this-my-cat";
 import { Demo as MultiplayerDemo } from "./demo/multiplayer";
 
 import { useMultiplayerB, useMultiplayerC } from "./hooks";
@@ -11,7 +11,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 const Container = styled.div`
   display: flex;
-  gap: 16px;
+  gap: 8px;
 `;
 
 const App = () => {
@@ -48,10 +48,6 @@ const App = () => {
             <MultiplayerDemo nOfInstances={1} useMultiplayerHook={useMultiplayerC} />
           </Route>
 
-          <Route path="/rename-player-multi">
-            <MultiplayerDemo nOfInstances={1} useMultiplayerHook={useMultiplayerC} />
-          </Route>
-
           <Route path="/use-event">
             <MultiplayerDemo nOfInstances={1} useMultiplayerHook={useMultiplayerC} />
           </Route>
@@ -64,13 +60,14 @@ const App = () => {
 const DEMOS = [
   "/expensive-render",
   "/is-this-my-cat",
+  "/is-this-my-cat?memo",
   "/singleplayer",
   "/singleplayer-double",
   "/multiplayer",
   "/use-event?comments",
   "/use-event?comments&add-comment=use-event",
   "/rename-player",
-  "/rename-player-multi?name=useSES",
+  "/rename-player?name=useSES",
 ];
 
 const KeyboardNavigation = () => {
@@ -101,10 +98,6 @@ const KeyboardNavigation = () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [handleKeyDown, DEMOS]);
-
-  useEffect(() => {
-    navigate(DEMOS[indexRef.current]);
-  }, [navigate]);
 
   return null;
 };

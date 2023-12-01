@@ -20,11 +20,11 @@ export const Button = forwardRef<HTMLButtonElement, ComponentProps<"button">>(
 );
 
 export const WorkingArea = ({ children }: { children: React.ReactNode }) => {
-  const size = 480;
+  const size = 540;
 
   return (
-    <Square $size={size} $gap={24}>
-      <Grid width={size} gap={24} />
+    <Square $size={size} $gap={32}>
+      <Grid width={size} gap={32} />
       <Inner>{children}</Inner>
     </Square>
   );
@@ -50,8 +50,8 @@ export const Grid = ({ width, height = width, gap, ...props }: GridProps) => {
     const rc = rough.svg(svg);
 
     svg.append(
-      rc.rectangle(0, 0, 480, 480, {
-        fill: "rgba(231, 228, 225, 0.5)",
+      rc.rectangle(0, 0, width, height, {
+        fill: "rgba(231, 228, 225, 0.65)",
         fillStyle: "zigzag",
         stroke: "none",
         hachureGap: 28,
@@ -60,7 +60,7 @@ export const Grid = ({ width, height = width, gap, ...props }: GridProps) => {
     );
 
     svg.append(
-      rc.rectangle(0, 0, 480, 480, {
+      rc.rectangle(0, 0, width, height, {
         fill: "rgba(223, 100, 54, 0.75)",
         fillWeight: 1,
         fillStyle: "cross-hatch",

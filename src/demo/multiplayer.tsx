@@ -1,11 +1,11 @@
-import React, { useRef, useCallback, ComponentProps, forwardRef, useEffect } from "react";
+import React, { useRef, useCallback, ComponentProps, forwardRef, useEffect, useState } from "react";
 import useEvent from "react-use-event-hook";
 import styled from "styled-components";
+import { Squircle } from "@squircle-js/react";
 
 import { Multiplayer } from "../Multiplayer";
 import { Cursor } from "../Cursor";
 import { WorkingArea, Button, UserIcon, Centered, CommentIcon } from "../ui";
-import { Squircle } from "@squircle-js/react";
 import { RenderIsExpensive } from "../RenderIsExpensive";
 
 import {
@@ -23,8 +23,8 @@ interface DemoProps {
   useMultiplayerHook: () => Multiplayer;
 }
 
-export const Demo = ({ nOfInstances, ...props }: DemoProps) => {
-  const instances = Array.from({ length: nOfInstances }).map(() => nanoid());
+export const Demo = React.memo(({ nOfInstances, ...props }: DemoProps) => {
+  const [instances] = useState(() => Array.from({ length: nOfInstances }).map(() => nanoid()));
   const search = useSearch(); // re-mount when search string changes
 
   return (
@@ -34,7 +34,7 @@ export const Demo = ({ nOfInstances, ...props }: DemoProps) => {
       ))}
     </>
   );
-};
+});
 
 const MultiplayerCursors = (props: Omit<DemoProps, "nOfInstances">) => {
   const client = props.useMultiplayerHook();

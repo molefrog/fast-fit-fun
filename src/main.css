@@ -3,11 +3,11 @@
 body {
   font-family: SFRounded, ui-rounded, "SF Pro Rounded", system-ui, "Helvetica Neue", Arial,
     Helvetica, sans-serif;
+  background: rgba(242, 242, 242, 1);
 
   padding: 80px 16px;
   display: flex;
   flex-flow: row wrap;
   align-items: center;
   justify-content: center;
-  gap: 24px;
 }
