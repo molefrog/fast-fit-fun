@@ -7,11 +7,7 @@ export function Throttle(interval: IntervalOption): any {
   let trailingArgs: any[] | null = null;
   let lastCall = 0;
 
-  return function (
-    target: any,
-    propertyKey: string,
-    descriptor: PropertyDescriptor
-  ) {
+  return function (_target: any, _propertyKey: string, descriptor: PropertyDescriptor) {
     // Save a reference to the original method
     const originalMethod = descriptor.value;
 
