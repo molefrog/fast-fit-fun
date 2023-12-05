@@ -19,11 +19,11 @@ export const Button = forwardRef<HTMLButtonElement, ComponentProps<"button">>(
   }
 );
 
-export const WorkingArea = ({ children }: { children: React.ReactNode }) => {
-  const size = 540;
+export type WorkingAreaProps = ComponentProps<"div"> & { size?: number };
 
+export const WorkingArea = ({ size = 540, children, ...props }: WorkingAreaProps) => {
   return (
-    <Square $size={size} $gap={32}>
+    <Square $size={size} $gap={32} {...props}>
       <Grid width={size} gap={32} />
       <Inner>{children}</Inner>
     </Square>
@@ -139,10 +139,20 @@ export const Centered = styled.div`
 `;
 
 const Square = styled.div<{ $size: number; $gap: number }>`
+  font-family: SFRounded, ui-rounded, "SF Pro Rounded", Comic Sans MS, system-ui, sans-serif;
+
   width: ${(props) => props.$size}px;
   height: ${(props) => props.$size}px;
   padding: ${(props) => props.$gap}px;
   position: relative;
+
+  /* Preferred box-sizing value */
+  &,
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
 `;
 
 const Inner = styled.div`
@@ -159,6 +169,10 @@ const SVG = styled.svg`
 
 const Button_ = styled.button`
   display: inline-block;
+
+  all: unset;
+  display: revert;
+  cursor: revert;
 `;
 
 const ButtonMasked = styled.div`

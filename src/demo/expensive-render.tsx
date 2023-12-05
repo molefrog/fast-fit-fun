@@ -13,7 +13,7 @@ export const Demo = () => {
   return (
     <WorkingArea>
       <Centered>
-        <RenderIsExpensive symbol="DKK">
+        <RenderIsExpensive symbol={["€", "$"]}>
           <Button onClick={handleClick}>Counter: {counter}</Button>
         </RenderIsExpensive>
       </Centered>

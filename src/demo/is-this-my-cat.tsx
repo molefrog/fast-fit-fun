@@ -1,6 +1,6 @@
 import React from "react";
 import { useCallback, useState } from "react";
-import { shuffle } from "lodash";
+import { shuffle } from "lodash-es";
 
 import { WorkingArea, Button, BigLabel, Centered } from "../ui";
 import { RenderIsExpensive } from "../RenderIsExpensive";

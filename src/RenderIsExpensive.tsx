@@ -16,6 +16,7 @@ import React, {
 import styled, { keyframes } from "styled-components";
 import { nanoid } from "nanoid";
 import { createPortal } from "react-dom";
+import { sample } from "lodash-es";
 
 const wiggleAnimation = (amplitude: number, maxHeight: number) => keyframes`
   0% { transform: translateY(0) rotate(0deg); opacity: 0; }
@@ -32,6 +33,8 @@ const ParticleStyle = styled.div<{
   $amplitude: number;
   $maxHeight: number;
 }>`
+  font-family: SFRounded, ui-rounded, "SF Pro Rounded", Comic Sans MS, system-ui, sans-serif;
+
   opacity: 0;
   pointer-events: none;
   user-select: none;
@@ -83,8 +86,12 @@ const Particle: React.FC<{
 };
 
 export const ParticleEmitter = forwardRef(
-  ({ targetRef, symbol }: { targetRef: RefObject<HTMLElement>; symbol: string }, ref) => {
+  (
+    { targetRef, symbol }: { targetRef: RefObject<HTMLElement>; symbol: string | Array<string> },
+    ref
+  ) => {
     const [particles, setParticles] = useState<Record<string, JSX.Element>>({});
+    const [symbols] = useState(() => [symbol].flat());
     const timerRef = useRef<ReturnType<typeof setTimeout>>();
 
     const removeParticle = (id: string) => {
@@ -137,6 +144,8 @@ export const ParticleEmitter = forwardRef(
           : 0;
         const startY = buttonRect ? buttonRect.top - size : 0;
 
+        const symbol = sample(symbols)!;
+
         const particleElement = (
           <Particle
             key={id}
@@ -175,7 +184,7 @@ export const RenderIsExpensive = ({
   symbol = "$",
 }: {
   children: ReactElement;
-  symbol?: string;
+  symbol?: string | string[];
 }) => {
   const firstRenderRef = useRef(true);
 
