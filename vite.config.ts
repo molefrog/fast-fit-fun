@@ -4,11 +4,15 @@ import externalGlobals from "rollup-plugin-external-globals";
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  define: {
+    "process.env.NODE_ENV": '"production"',
+  },
   build: {
     lib: {
       entry: "./src/library.tsx",
       formats: ["es"],
     },
+
     rollupOptions: {
       plugins: [
         externalGlobals({
