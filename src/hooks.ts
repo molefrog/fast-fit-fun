@@ -1,54 +1,34 @@
-import {
-  useEffect,
-  useState,
-  useRef,
-  useSyncExternalStore,
-  createContext,
-  useContext,
-} from "react";
+import { useEffect, useState, useRef, useSyncExternalStore } from "react";
 
 import { Multiplayer, Events } from "./Multiplayer"; // import your Multiplayer class
+
+export type UseMultiplayerHook = (room?: string) => Multiplayer;
 
 /** A. Instance is stored as a global variable
  * Cons:
  *  [-] resource is initialized when the script is evaluated
  *  [-] no isolation between multiple instances of the app
  */
-let globalClient: Multiplayer; // = new Multiplayer()
+let globalClient: Multiplayer = new Multiplayer({ room: "init" });
 
-export const useMultiplayerA = () => globalClient;
+export const useMultiplayerA: UseMultiplayerHook = () => globalClient; // ingore the room
 
 /** B. Lazy-initialized, stored as a global variable
  * Cons:
  *  [-] no isolation between multiple instances of the app
  */
-export const useMultiplayerB = (): Multiplayer => (globalClient ||= new Multiplayer());
+export const useMultiplayerB: UseMultiplayerHook = (room): Multiplayer =>
+  (globalClient ||= new Multiplayer({ room }));
 
 /** B. Scoped to the current component
  * Cons:
  *  [-] creates an instance every time it is called, hence can only be called once
  */
-export const useMultiplayerC = () => {
+export const useMultiplayerC: UseMultiplayerHook = (room) => {
   const clientRef = useRef<Multiplayer>();
   const [client] = useState<Multiplayer>(() => {
-    return (clientRef.current ||= new Multiplayer());
+    return (clientRef.current ||= new Multiplayer({ room }));
   });
-
-  return client;
-};
-
-/** D. Store in the context cache
- * Pros:
- *  [+] each app instance gets its own client
- *  [+] client is created on demand, e.g. when `useMultiplayer` is first called
- *  [+] can call `useMultiplayer` in any place of our app, only one instance is created
- */
-const ClientCtx = createContext<{ client?: Multiplayer }>({});
-
-export const useMultiplayerD = () => {
-  const cache = useContext(ClientCtx);
-
-  const [client] = useState(() => (cache.client ||= new Multiplayer()));
 
   return client;
 };

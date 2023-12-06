@@ -23,13 +23,15 @@ import {
   usePositionUpdates,
   usePlayerNameSES,
   useMultiplayerC,
+  UseMultiplayerHook,
 } from "../hooks";
 import { nanoid } from "nanoid";
 
 interface Options {
-  useMultiplayerHook: () => Multiplayer;
+  useMultiplayerHook: UseMultiplayerHook;
   usePlayerNameHook: (client: Multiplayer) => string;
   comments: boolean | "use-callback" | "use-event";
+  room?: string;
 }
 
 const defaultOptions: Options = {
@@ -61,9 +63,9 @@ export const Demo = React.memo(({ nOfInstances, ...props }: DemoProps) => {
 
 const MultiplayerCursors = () => {
   const options = useOptions();
-  const { useMultiplayerHook } = options;
+  const { useMultiplayerHook, room } = options;
 
-  const client = useMultiplayerHook();
+  const client = useMultiplayerHook(room);
   const connection = useConnectionStatus(client);
 
   useEffect(() => {

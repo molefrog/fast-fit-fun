@@ -8,6 +8,7 @@ export interface Player {
   y: number;
   color: string;
   name: string;
+  room: string;
 }
 
 export type Connection = "offline" | "connecting" | "online" | "disconnecting";
@@ -31,13 +32,16 @@ export class Multiplayer {
   connection: Connection = "offline";
 
   #name: string;
+  readonly room: string; // Add room property
   #emitter: Emitter<Events>;
 
   constructor({
     autoconnect = true,
     spawnBoundary = 400,
-  }: { autoconnect?: boolean; spawnBoundary?: number } = {}) {
+    room = "*",
+  }: { autoconnect?: boolean; spawnBoundary?: number; room?: string } = {}) {
     this.#name = randomCatName();
+    this.room = room;
 
     // optimistic state of the current player
     this.me = {
@@ -45,6 +49,7 @@ export class Multiplayer {
       name: this.#name,
       x: random(spawnBoundary),
       y: random(spawnBoundary),
+      room: this.room,
     };
 
     this.#emitter = createNanoEvents();
@@ -59,7 +64,16 @@ export class Multiplayer {
   }
 
   get players(): Players {
-    return { ...Multiplayer.players, [this.#name]: this.me };
+    let others = Multiplayer.players;
+
+    // Filter players based on room
+    if (this.room !== "*") {
+      others = Object.fromEntries(
+        Object.entries(Multiplayer.players).filter(([_, player]) => player.room === this.room)
+      );
+    }
+
+    return { ...others, [this.#name]: this.me };
   }
 
   async connect(): Promise<void> {

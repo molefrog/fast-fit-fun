@@ -32,11 +32,11 @@ const App = () => {
           </Route>
 
           <Route path="/singleplayer-double">
-            <MultiplayerDemo nOfInstances={2} useMultiplayerHook={useMultiplayerB} />
+            <MultiplayerDemo nOfInstances={2} room="my" useMultiplayerHook={useMultiplayerB} />
           </Route>
 
           <Route path="/multiplayer">
-            <MultiplayerDemo nOfInstances={2} useMultiplayerHook={useMultiplayerC} />
+            <MultiplayerDemo nOfInstances={2} room="my" useMultiplayerHook={useMultiplayerC} />
           </Route>
 
           <Route path="/rename-player">
