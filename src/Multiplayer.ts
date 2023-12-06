@@ -1,6 +1,7 @@
 import { createNanoEvents, Emitter } from "nanoevents";
 import { randomCatName, randomColor } from "./meow";
 import { Throttle } from "./throttle";
+import { random } from "lodash-es";
 
 export interface Player {
   x: number;
@@ -32,15 +33,18 @@ export class Multiplayer {
   #name: string;
   #emitter: Emitter<Events>;
 
-  constructor({ autoconnect = true }: { autoconnect?: boolean } = {}) {
+  constructor({
+    autoconnect = true,
+    spawnBoundary = 400,
+  }: { autoconnect?: boolean; spawnBoundary?: number } = {}) {
     this.#name = randomCatName();
 
     // optimistic state of the current player
     this.me = {
       color: randomColor(),
       name: this.#name,
-      x: 0,
-      y: 0,
+      x: random(spawnBoundary),
+      y: random(spawnBoundary),
     };
 
     this.#emitter = createNanoEvents();

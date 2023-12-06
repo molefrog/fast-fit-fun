@@ -2,7 +2,7 @@ import { Squircle } from "@squircle-js/react";
 import { useRef, useLayoutEffect, ComponentProps, forwardRef } from "react";
 import rough from "roughjs";
 import styled from "styled-components";
-import { useElementSize, useMediaQuery } from "usehooks-ts";
+import { useMediaQuery } from "usehooks-ts";
 
 export const Button = forwardRef<HTMLButtonElement, ComponentProps<"button">>(
   ({ children, ...props }, ref) => {
