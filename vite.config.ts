@@ -1,5 +1,6 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
+import externalGlobals from "rollup-plugin-external-globals";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -9,9 +10,13 @@ export default defineConfig({
       formats: ["es"],
     },
     rollupOptions: {
-      // make sure to externalize deps that shouldn't be bundled
-      // into your library
-      external: ["react", "react-dom"],
+      plugins: [
+        externalGlobals({
+          react: "$__externals.React",
+          "react/jsx-runtime": "$__externals.JSXRuntime",
+          "react-dom": "$__externals.ReactDOM",
+        }),
+      ],
     },
   },
 
