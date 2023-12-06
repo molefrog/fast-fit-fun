@@ -8,6 +8,7 @@ import {
   ExpensiveRenderDemo,
   CatDemo,
   MultiplayerDemo,
+  usePlayerNameSES,
   useMultiplayerB,
   useMultiplayerC,
 } from "./library";
@@ -23,7 +24,7 @@ const App = () => {
           </Route>
 
           <Route path="/is-this-my-cat">
-            <CatDemo />
+            <CatDemo memoize />
           </Route>
 
           <Route path="/singleplayer">
@@ -35,19 +36,19 @@ const App = () => {
           </Route>
 
           <Route path="/multiplayer">
-            <MultiplayerDemo
-              key="multiplayer"
-              nOfInstances={2}
-              useMultiplayerHook={useMultiplayerC}
-            />
+            <MultiplayerDemo nOfInstances={2} useMultiplayerHook={useMultiplayerC} />
           </Route>
 
           <Route path="/rename-player">
-            <MultiplayerDemo nOfInstances={1} useMultiplayerHook={useMultiplayerC} />
+            <MultiplayerDemo nOfInstances={1} usePlayerNameHook={usePlayerNameSES} />
           </Route>
 
-          <Route path="/use-event">
-            <MultiplayerDemo nOfInstances={1} useMultiplayerHook={useMultiplayerC} />
+          <Route path="/comments-memo">
+            <MultiplayerDemo nOfInstances={1} comments="use-callback" />
+          </Route>
+
+          <Route path="/comments">
+            <MultiplayerDemo nOfInstances={1} comments="use-event" />
           </Route>
         </Switch>
       </Container>
@@ -63,14 +64,12 @@ const Container = styled.div`
 const DEMOS = [
   "/expensive-render",
   "/is-this-my-cat",
-  "/is-this-my-cat?memo",
   "/singleplayer",
   "/singleplayer-double",
   "/multiplayer",
-  "/use-event?comments",
-  "/use-event?comments&add-comment=use-event",
+  "/comments-memo",
+  "/comments",
   "/rename-player",
-  "/rename-player?name=useSES",
 ];
 
 /**

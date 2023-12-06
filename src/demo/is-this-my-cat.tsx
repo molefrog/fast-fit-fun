@@ -5,7 +5,6 @@ import { shuffle } from "lodash-es";
 import { WorkingArea, Button, BigLabel, Centered } from "../ui";
 import { RenderIsExpensive } from "../RenderIsExpensive";
 import { CAT_NAMES } from "../meow";
-import { useSearch } from "wouter";
 
 const MY_CATS = ["Bambooni", "Waffle"];
 
@@ -21,8 +20,7 @@ const IsThisMyCat = ({ isIt }: { isIt: boolean }) => {
 
 const IsThisMyCatMemoized = React.memo(IsThisMyCat);
 
-export const Demo = () => {
-  const params = new URLSearchParams(useSearch());
+export const Demo = ({ memoize }: { memoize: boolean }) => {
   const [i, setI] = useState(0);
 
   const [catNames] = useState(() => {
@@ -33,7 +31,7 @@ export const Demo = () => {
     setI((i) => (i + 1) % catNames.length);
   }, [catNames]);
 
-  const ResultComponent = params.has("memo") ? IsThisMyCatMemoized : IsThisMyCat;
+  const ResultComponent = memoize ? IsThisMyCatMemoized : IsThisMyCat;
 
   return (
     <WorkingArea>

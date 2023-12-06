@@ -3,26 +3,35 @@ import react from "@vitejs/plugin-react-swc";
 import externalGlobals from "rollup-plugin-external-globals";
 
 // https://vitejs.dev/config/
-export default defineConfig({
-  define: {
-    "process.env.NODE_ENV": '"production"',
-  },
-  build: {
-    lib: {
-      entry: "./src/library.tsx",
-      formats: ["es"],
-    },
+export default defineConfig(({ command }) => {
+  let libraryOptions = {};
 
-    rollupOptions: {
-      plugins: [
-        externalGlobals({
-          react: "$__externals.React",
-          "react/jsx-runtime": "$__externals.JSXRuntime",
-          "react-dom": "$__externals.ReactDOM",
-        }),
-      ],
-    },
-  },
+  if (command === "build") {
+    libraryOptions = {
+      define: {
+        "process.env.NODE_ENV": '"production"',
+      },
+      build: {
+        lib: {
+          entry: "./src/library.tsx",
+          formats: ["es"],
+        },
 
-  plugins: [react({ tsDecorators: true })],
+        rollupOptions: {
+          plugins: [
+            externalGlobals({
+              react: "$__externals.React",
+              "react/jsx-runtime": "$__externals.JSXRuntime",
+              "react-dom": "$__externals.ReactDOM",
+            }),
+          ],
+        },
+      },
+    };
+  }
+
+  return {
+    ...libraryOptions,
+    plugins: [react({ tsDecorators: true })],
+  };
 });

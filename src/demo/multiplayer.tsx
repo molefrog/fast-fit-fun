@@ -1,4 +1,13 @@
-import React, { useRef, useCallback, ComponentProps, forwardRef, useEffect, useState } from "react";
+import React, {
+  useRef,
+  useCallback,
+  ComponentProps,
+  forwardRef,
+  useEffect,
+  useState,
+  createContext,
+  useContext,
+} from "react";
 import useEvent from "react-use-event-hook";
 import styled from "styled-components";
 import { Squircle } from "@squircle-js/react";
@@ -13,31 +22,48 @@ import {
   usePeopleConnected,
   usePositionUpdates,
   usePlayerNameSES,
-  usePlayerNameStateAndEffect,
+  useMultiplayerC,
 } from "../hooks";
 import { nanoid } from "nanoid";
-import { useSearch } from "wouter";
 
-interface DemoProps {
-  nOfInstances: number;
+interface Options {
   useMultiplayerHook: () => Multiplayer;
+  usePlayerNameHook: (client: Multiplayer) => string;
+  comments: boolean | "use-callback" | "use-event";
 }
 
+const defaultOptions: Options = {
+  useMultiplayerHook: useMultiplayerC,
+  usePlayerNameHook: usePlayerNameSES,
+  comments: false,
+};
+
+const OptionsContext = createContext<Options>(defaultOptions);
+
+const useOptions = () => useContext(OptionsContext);
+
+type DemoProps = Partial<Options> & {
+  nOfInstances: number;
+};
+
 export const Demo = React.memo(({ nOfInstances, ...props }: DemoProps) => {
-  const [instances] = useState(() => Array.from({ length: nOfInstances }).map(() => nanoid()));
-  const search = useSearch(); // re-mount when search string changes
+  const instances = Array.from({ length: nOfInstances }).map(() => nanoid());
+  const options = { ...defaultOptions, ...props };
 
   return (
-    <>
+    <OptionsContext.Provider value={options}>
       {instances.map((id) => (
-        <MultiplayerCursors key={id + search} {...props} />
+        <MultiplayerCursors key={id} />
       ))}
-    </>
+    </OptionsContext.Provider>
   );
 });
 
-const MultiplayerCursors = (props: Omit<DemoProps, "nOfInstances">) => {
-  const client = props.useMultiplayerHook();
+const MultiplayerCursors = () => {
+  const options = useOptions();
+  const { useMultiplayerHook } = options;
+
+  const client = useMultiplayerHook();
   const connection = useConnectionStatus(client);
 
   useEffect(() => {
@@ -105,9 +131,8 @@ const Status = ({ client }: { client: Multiplayer }) => {
 };
 
 const MyPlayerName = React.memo(({ client }: { client: Multiplayer }) => {
-  const params = new URLSearchParams(useSearch());
-
-  const hook = params.get("name") === "useSES" ? usePlayerNameSES : usePlayerNameStateAndEffect;
+  const options = useOptions();
+  const [hook] = useState(() => options.usePlayerNameHook);
 
   const myName = hook(client);
 
@@ -126,8 +151,8 @@ const MyPlayerName = React.memo(({ client }: { client: Multiplayer }) => {
 });
 
 const Canvas = ({ client }: { client: Multiplayer }) => {
-  const params = new URLSearchParams(useSearch());
   const squareRef = useRef<HTMLDivElement>(null);
+  const options = useOptions();
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (client) {
@@ -151,8 +176,8 @@ const Canvas = ({ client }: { client: Multiplayer }) => {
     someWork.current = [client.me.x, client.me.y];
   });
 
-  const addComment =
-    params.get("add-comment") === "use-event" ? addCommentUseEvent : addCommentMemo;
+  const addComment = options.comments === "use-callback" ? addCommentMemo : addCommentUseEvent;
+  const hasComments = !!options.comments;
 
   return (
     <CanvasContainer ref={squareRef} onMouseMove={handleMouseMove}>
@@ -162,7 +187,7 @@ const Canvas = ({ client }: { client: Multiplayer }) => {
 
       <Cursor player={client.players[client.name]} isMe />
 
-      {params.has("comments") && <Comments onComment={addComment} />}
+      {hasComments && <Comments onComment={addComment} />}
     </CanvasContainer>
   );
 };
