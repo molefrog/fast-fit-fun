@@ -9,14 +9,17 @@ export type UseMultiplayerHook = (room?: string) => Multiplayer;
  *  [-] resource is initialized when the script is evaluated
  *  [-] no isolation between multiple instances of the app
  */
-let globalClient: Multiplayer = new Multiplayer({ room: "init" });
+let singletonClient: Multiplayer = new Multiplayer({ room: "init" });
 
-export const useMultiplayerA: UseMultiplayerHook = () => globalClient; // ingore the room
+export const useMultiplayerA: UseMultiplayerHook = () => singletonClient; // ingore the room
 
 /** B. Lazy-initialized, stored as a global variable
  * Cons:
  *  [-] no isolation between multiple instances of the app
  */
+
+let globalClient: Multiplayer;
+
 export const useMultiplayerB: UseMultiplayerHook = (room): Multiplayer =>
   (globalClient ||= new Multiplayer({ room }));
 
