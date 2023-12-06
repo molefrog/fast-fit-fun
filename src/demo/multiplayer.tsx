@@ -156,11 +156,23 @@ const Canvas = ({ client }: { client: Multiplayer }) => {
   const squareRef = useRef<HTMLDivElement>(null);
   const options = useOptions();
 
+  const movePlayer = useCallback(
+    (x: number, y: number) => {
+      client?.move(x, y);
+    },
+    [client]
+  );
+
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    if (client) {
-      const rect = squareRef.current!.getBoundingClientRect();
-      client.move(e.clientX - rect.left, e.clientY - rect.top);
-    }
+    const rect = squareRef.current!.getBoundingClientRect();
+    movePlayer(e.clientX - rect.left, e.clientY - rect.top);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    const rect = squareRef.current!.getBoundingClientRect();
+    const touch = e.touches[0];
+
+    movePlayer(touch.clientX - rect.left, touch.clientY - rect.top);
   };
 
   usePositionUpdates(client);
@@ -182,7 +194,7 @@ const Canvas = ({ client }: { client: Multiplayer }) => {
   const hasComments = !!options.comments;
 
   return (
-    <CanvasContainer ref={squareRef} onMouseMove={handleMouseMove}>
+    <CanvasContainer ref={squareRef} onMouseMove={handleMouseMove} onTouchMove={handleTouchMove}>
       {otherPlayers.map((p) => (
         <Cursor key={p.name} player={p} />
       ))}
@@ -211,6 +223,7 @@ const CanvasContainer = styled.div`
   height: 100%;
   position: relative;
   overflow: hidden;
+  touch-action: none;
   cursor: none;
 `;
 
