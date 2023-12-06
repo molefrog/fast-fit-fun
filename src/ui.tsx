@@ -2,6 +2,7 @@ import { Squircle } from "@squircle-js/react";
 import { useRef, useLayoutEffect, ComponentProps, forwardRef } from "react";
 import rough from "roughjs";
 import styled from "styled-components";
+import { useElementSize, useMediaQuery } from "usehooks-ts";
 
 export const Button = forwardRef<HTMLButtonElement, ComponentProps<"button">>(
   ({ children, ...props }, ref) => {
@@ -19,12 +20,22 @@ export const Button = forwardRef<HTMLButtonElement, ComponentProps<"button">>(
   }
 );
 
-export type WorkingAreaProps = ComponentProps<"div"> & { size?: number };
+export type WorkingAreaProps = ComponentProps<"div"> & { size?: number; mobileSize?: number };
 
-export const WorkingArea = ({ size = 540, children, ...props }: WorkingAreaProps) => {
+export const WorkingArea = ({
+  size = 540,
+  mobileSize = 420,
+  children,
+  ...props
+}: WorkingAreaProps) => {
+  const gap = 32;
+
+  const matches = useMediaQuery("(min-width: 640px)");
+  const width = matches ? size : mobileSize;
+
   return (
-    <Square $size={size} $gap={32} {...props}>
-      <Grid width={size} gap={32} />
+    <Square style={{ width: `${width}px`, height: `${width}px` }} $gap={gap} {...props}>
+      <Grid width={width} gap={gap} />
       <Inner>{children}</Inner>
     </Square>
   );
@@ -70,7 +81,7 @@ export const Grid = ({ width, height = width, gap, ...props }: GridProps) => {
         hachureGap: 60,
       })
     );
-  }, []);
+  }, [width]);
 
   return (
     <SVG
@@ -138,11 +149,9 @@ export const Centered = styled.div`
   height: 100%;
 `;
 
-const Square = styled.div<{ $size: number; $gap: number }>`
+const Square = styled.div<{ $gap: number }>`
   font-family: SFRounded, ui-rounded, "SF Pro Rounded", Comic Sans MS, system-ui, sans-serif;
 
-  width: ${(props) => props.$size}px;
-  height: ${(props) => props.$size}px;
   padding: ${(props) => props.$gap}px;
   position: relative;
 

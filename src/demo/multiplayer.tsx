@@ -264,22 +264,23 @@ const CurrentPlayerDiv = styled.div<{ $color: string }>`
     color: white;
     font-size: 22px;
     font-weight: 600;
-    height: 44px;
+    height: 46px;
 
-    padding: 6px 14px;
+    padding: 0px 14px;
     text-shadow: 0px 1px 0px #333;
   }
 `;
 
 const PeopleConnected = styled(Squircle)`
   font-size: 22px;
+  height: 46px;
   font-weight: 600;
   display: flex;
   align-items: center;
   gap: 8px;
   background: black;
   color: white;
-  padding: 6px 14px;
+  padding: 0px 14px;
 
   > svg {
     width: 24px;
