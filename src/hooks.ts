@@ -1,6 +1,6 @@
-import { useEffect, useState, useRef, useSyncExternalStore } from "react";
+import { use, useEffect, useRef, useState, useSyncExternalStore } from "react";
 
-import { Multiplayer, Events } from "./Multiplayer"; // import your Multiplayer class
+import { Events, Multiplayer } from "./Multiplayer"; // import your Multiplayer class
 
 export type UseMultiplayerHook = (room?: string) => Multiplayer;
 
@@ -44,7 +44,7 @@ const useSubscribeTo = (client: Multiplayer, event: keyof Events) => {
       // initializer trick to build this function on the first pass
       // hence, this hook can't work with variable `event`
       (cb: () => void) =>
-        client.on(event, cb)
+        client.on(event, cb),
   );
 
   return subscribe;
@@ -92,4 +92,18 @@ export const usePositionUpdates = (client: Multiplayer) => {
     // set state to an empty objec to trigger a re-render
     return client.on("update", () => update({}));
   }, [client]);
+};
+
+const suspenseCache: { [key: string]: Promise<void> } = {};
+
+export const useSuspenseDelay = (ms: number, cacheKey: string) => {
+  if (!suspenseCache[cacheKey]) {
+    suspenseCache[cacheKey] = new Promise<void>((resolve) => {
+      setTimeout(resolve, ms);
+    }).finally(() => {
+      delete suspenseCache[cacheKey];
+    });
+  }
+
+  return use(suspenseCache[cacheKey]);
 };

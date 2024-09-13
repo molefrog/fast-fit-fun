@@ -1,37 +1,36 @@
+import { Squircle } from "@squircle-js/react";
 import React, {
-  useRef,
-  useCallback,
   ComponentProps,
-  forwardRef,
-  useEffect,
-  useState,
   createContext,
+  forwardRef,
+  useCallback,
   useContext,
+  useEffect,
+  useRef,
+  useState,
 } from "react";
 import useEvent from "react-use-event-hook";
 import styled from "styled-components";
-import { Squircle } from "@squircle-js/react";
 
-import { Multiplayer } from "../Multiplayer";
 import { Cursor } from "../Cursor";
-import { WorkingArea, Button, UserIcon, Centered, CommentIcon } from "../ui";
+import { Multiplayer } from "../Multiplayer";
 import { RenderIsExpensive } from "../RenderIsExpensive";
+import { Button, Centered, CommentIcon, UserIcon, WorkingArea } from "../ui";
 
-import {
-  useConnectionStatus,
-  usePeopleConnected,
-  usePositionUpdates,
-  usePlayerNameSES,
-  useMultiplayerC,
-  UseMultiplayerHook,
-} from "../hooks";
 import { nanoid } from "nanoid";
+import {
+  UseMultiplayerHook,
+  useConnectionStatus,
+  useMultiplayerC,
+  usePeopleConnected,
+  usePlayerNameSES,
+  usePositionUpdates,
+} from "../hooks";
 
 interface Options {
   useMultiplayerHook: UseMultiplayerHook;
   usePlayerNameHook: (client: Multiplayer) => string;
   comments: boolean | "use-callback" | "use-event";
-  room?: string;
 }
 
 const defaultOptions: Options = {
@@ -48,24 +47,22 @@ type DemoProps = Partial<Options> & {
   nOfInstances: number;
 };
 
-export const Demo = React.memo(({ nOfInstances, ...props }: DemoProps) => {
+export const Demo = React.memo(({ nOfInstances, ...options }: DemoProps) => {
   const instances = Array.from({ length: nOfInstances }).map(() => nanoid());
-  const options = { ...defaultOptions, ...props };
 
-  return (
-    <OptionsContext.Provider value={options}>
-      {instances.map((id) => (
-        <MultiplayerCursors key={id} />
-      ))}
-    </OptionsContext.Provider>
-  );
+  return instances.map((id) => <MultiplayerCursors key={id} renderOptions={options} />);
 });
 
-const MultiplayerCursors = () => {
-  const options = useOptions();
-  const { useMultiplayerHook, room } = options;
+const MultiplayerCursors = ({
+  room,
+  renderOptions,
+}: {
+  room?: string;
+  renderOptions: Partial<Options>;
+}) => {
+  const options = { ...defaultOptions, ...renderOptions };
 
-  const client = useMultiplayerHook(room);
+  const client = options.useMultiplayerHook(room);
   const connection = useConnectionStatus(client);
 
   useEffect(() => {
@@ -79,24 +76,26 @@ const MultiplayerCursors = () => {
   }, [client]);
 
   return (
-    <WorkingArea>
-      {connection === "connecting" && <LoadingLabel>Connecting...</LoadingLabel>}
+    <OptionsContext.Provider value={options}>
+      <WorkingArea>
+        {connection === "connecting" && <LoadingLabel>Connecting...</LoadingLabel>}
 
-      {connection === "disconnecting" && <LoadingLabel>Disconnecting...</LoadingLabel>}
+        {connection === "disconnecting" && <LoadingLabel>Disconnecting...</LoadingLabel>}
 
-      {connection === "online" && (
-        <>
-          <Canvas client={client} />
-          <Status client={client} />
-        </>
-      )}
+        {connection === "online" && (
+          <>
+            <Canvas client={client} />
+            <Status client={client} />
+          </>
+        )}
 
-      {connection === "offline" && (
-        <Centered>
-          <Button onClick={connect}>Connect</Button>
-        </Centered>
-      )}
-    </WorkingArea>
+        {connection === "offline" && (
+          <Centered>
+            <Button onClick={connect}>Connect</Button>
+          </Centered>
+        )}
+      </WorkingArea>
+    </OptionsContext.Provider>
   );
 };
 
@@ -160,7 +159,7 @@ const Canvas = ({ client }: { client: Multiplayer }) => {
     (x: number, y: number) => {
       client?.move(x, y);
     },
-    [client]
+    [client],
   );
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -215,7 +214,7 @@ const CurrentPlayer = forwardRef<HTMLDivElement, ComponentProps<"div"> & { $colo
         </Squircle>
       </CurrentPlayerDiv>
     );
-  }
+  },
 );
 
 const CanvasContainer = styled.div`
