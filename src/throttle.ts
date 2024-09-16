@@ -1,7 +1,7 @@
-// Decorator for throttle
+/* eslint @typescript-eslint/no-explicit-any: 0 */
 export type IntervalOption = number | (() => number);
 
-export function Throttle(interval: IntervalOption): any {
+export function Throttle(interval: IntervalOption) {
   // timeout ID, the arguments of the last call, and the time of the last call
   let timeoutId: ReturnType<typeof setTimeout> | null = null;
   let trailingArgs: any[] | null = null;
@@ -12,6 +12,7 @@ export function Throttle(interval: IntervalOption): any {
     const originalMethod = descriptor.value;
 
     // Replace the original method with a new function
+
     descriptor.value = function (...args: any[]) {
       const now = Date.now();
 

@@ -1,16 +1,16 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom/client";
-import { Route, Switch, useLocation } from "wouter";
 import styled from "styled-components";
+import { Route, Switch, useLocation } from "wouter";
 import "./main.css";
 
 import {
-  ExpensiveRenderDemo,
   CatDemo,
+  ExpensiveRenderDemo,
   MultiplayerDemo,
-  usePlayerNameSES,
   useMultiplayerB,
   useMultiplayerC,
+  usePlayerNameSES,
 } from "./library";
 
 const App = () => {
@@ -84,17 +84,20 @@ const KeyboardNavigation = () => {
   const indexRef = useRef(startIndex);
   const [, navigate] = useLocation();
 
-  const handleKeyDown = useCallback((event: KeyboardEvent) => {
-    let currentLocationIndex = indexRef.current;
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      const currentLocationIndex = indexRef.current;
 
-    if (event.key === "ArrowRight") {
-      indexRef.current = (currentLocationIndex + 1) % DEMOS.length;
-    } else if (event.key === "ArrowLeft") {
-      indexRef.current = (currentLocationIndex - 1 + DEMOS.length) % DEMOS.length;
-    }
+      if (event.key === "ArrowRight") {
+        indexRef.current = (currentLocationIndex + 1) % DEMOS.length;
+      } else if (event.key === "ArrowLeft") {
+        indexRef.current = (currentLocationIndex - 1 + DEMOS.length) % DEMOS.length;
+      }
 
-    navigate(DEMOS[indexRef.current]);
-  }, []);
+      navigate(DEMOS[indexRef.current]);
+    },
+    [navigate],
+  );
 
   useEffect(() => {
     window.addEventListener("keydown", handleKeyDown);
@@ -102,7 +105,7 @@ const KeyboardNavigation = () => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [handleKeyDown, DEMOS]);
+  }, [handleKeyDown]);
 
   return null;
 };

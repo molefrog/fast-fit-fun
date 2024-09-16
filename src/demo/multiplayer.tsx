@@ -47,7 +47,7 @@ type DemoProps = Partial<Options> & {
   nOfInstances: number;
 };
 
-export const Demo = React.memo(({ nOfInstances, ...options }: DemoProps) => {
+export const Demo = React.memo(function Demo$({ nOfInstances, ...options }: DemoProps) {
   const instances = Array.from({ length: nOfInstances }).map(() => nanoid());
 
   return instances.map((id) => <MultiplayerCursors key={id} renderOptions={options} />);
@@ -99,7 +99,7 @@ const MultiplayerCursors = ({
   );
 };
 
-const Comments = React.memo(({ onComment }: { onComment: () => void }) => {
+const Comments = React.memo(function Comments$({ onComment }: { onComment: () => void }) {
   return (
     <RenderIsExpensive>
       <CommentsContainer>
@@ -131,7 +131,7 @@ const Status = ({ client }: { client: Multiplayer }) => {
   );
 };
 
-const MyPlayerName = React.memo(({ client }: { client: Multiplayer }) => {
+const MyPlayerName = React.memo(function MyPlayerName$({ client }: { client: Multiplayer }) {
   const options = useOptions();
   const [hook] = useState(() => options.usePlayerNameHook);
 
@@ -206,7 +206,7 @@ const Canvas = ({ client }: { client: Multiplayer }) => {
 };
 
 const CurrentPlayer = forwardRef<HTMLDivElement, ComponentProps<"div"> & { $color: string }>(
-  ({ children, ...props }, ref) => {
+  function CurrentPlayerWithRef({ children, ...props }, ref) {
     return (
       <CurrentPlayerDiv ref={ref} {...props}>
         <Squircle cornerRadius={12} cornerSmoothing={1}>

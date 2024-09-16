@@ -1,7 +1,7 @@
+import { random } from "lodash-es";
 import { createNanoEvents, Emitter } from "nanoevents";
 import { randomCatName, randomColor } from "./meow";
 import { Throttle } from "./throttle";
-import { random } from "lodash-es";
 
 export interface Player {
   x: number;
@@ -69,7 +69,7 @@ export class Multiplayer {
     // Filter players based on room
     if (this.room !== "*") {
       others = Object.fromEntries(
-        Object.entries(Multiplayer.players).filter(([_, player]) => player.room === this.room)
+        Object.entries(Multiplayer.players).filter(([, player]) => player.room === this.room),
       );
     }
 

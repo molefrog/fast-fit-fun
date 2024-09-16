@@ -1,11 +1,11 @@
 import { Squircle } from "@squircle-js/react";
-import { useRef, useLayoutEffect, ComponentProps, forwardRef } from "react";
+import { ComponentProps, forwardRef, useLayoutEffect, useRef } from "react";
 import rough from "roughjs";
 import styled from "styled-components";
 import { useMediaQuery } from "usehooks-ts";
 
 export const Button = forwardRef<HTMLButtonElement, ComponentProps<"button">>(
-  ({ children, ...props }, ref) => {
+  function ButtonWithRef({ children, ...props }, ref) {
     const key = useRef(0); // recalculate squircle
 
     return (
@@ -17,7 +17,7 @@ export const Button = forwardRef<HTMLButtonElement, ComponentProps<"button">>(
         </Squircle>
       </Button_>
     );
-  }
+  },
 );
 
 export type WorkingAreaProps = ComponentProps<"div"> & { size?: number; mobileSize?: number };
@@ -67,7 +67,7 @@ export const Grid = ({ width, height = width, gap, ...props }: GridProps) => {
         stroke: "none",
         hachureGap: 28,
         fillWeight: 20,
-      })
+      }),
     );
 
     svg.append(
@@ -79,9 +79,9 @@ export const Grid = ({ width, height = width, gap, ...props }: GridProps) => {
         roughness: 2,
         strokeWidth: 3,
         hachureGap: 60,
-      })
+      }),
     );
-  }, [width]);
+  }, [width, height]);
 
   return (
     <SVG
@@ -150,7 +150,13 @@ export const Centered = styled.div`
 `;
 
 const Square = styled.div<{ $gap: number }>`
-  font-family: SFRounded, ui-rounded, "SF Pro Rounded", Comic Sans MS, system-ui, sans-serif;
+  font-family:
+    SFRounded,
+    ui-rounded,
+    "SF Pro Rounded",
+    Comic Sans MS,
+    system-ui,
+    sans-serif;
 
   padding: ${(props) => props.$gap}px;
   position: relative;

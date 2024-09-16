@@ -9,7 +9,7 @@ export type UseMultiplayerHook = (room?: string) => Multiplayer;
  *  [-] resource is initialized when the script is evaluated
  *  [-] no isolation between multiple instances of the app
  */
-let singletonClient: Multiplayer = new Multiplayer({ room: "init" });
+const singletonClient: Multiplayer = new Multiplayer({ room: "init" });
 
 export const useMultiplayerA: UseMultiplayerHook = () => singletonClient; // ingore the room
 

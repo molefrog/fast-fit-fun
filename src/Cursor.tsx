@@ -1,7 +1,7 @@
-import styled from "styled-components";
 import { Squircle } from "@squircle-js/react";
-import { Player } from "./Multiplayer"; // import your Multiplayer class
 import React from "react";
+import styled from "styled-components";
+import { Player } from "./Multiplayer"; // import your Multiplayer class
 import { RenderIsExpensive } from "./RenderIsExpensive";
 
 interface CursorProps {
@@ -9,7 +9,13 @@ interface CursorProps {
   isMe?: boolean;
 }
 
-const PlayerName = React.memo(({ color, name }: { color: string; name: string }) => {
+const PlayerName = React.memo(function PlayerName$({
+  color,
+  name,
+}: {
+  color: string;
+  name: string;
+}) {
   return (
     <RenderIsExpensive>
       <LabelWrap>

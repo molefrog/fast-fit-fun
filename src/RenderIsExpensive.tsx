@@ -2,21 +2,21 @@
  * ChatGPT https://chat.openai.com/share/24dba9bb-b90c-4ade-a627-7934b7036873
  */
 
-import React, {
-  useState,
-  useRef,
-  useEffect,
-  isValidElement,
-  cloneElement,
-  ReactElement,
-  forwardRef,
-  RefObject,
-  useImperativeHandle,
-} from "react";
-import styled, { keyframes } from "styled-components";
-import { nanoid } from "nanoid";
-import { createPortal } from "react-dom";
 import { sample } from "lodash-es";
+import { nanoid } from "nanoid";
+import React, {
+  ReactElement,
+  RefObject,
+  cloneElement,
+  forwardRef,
+  isValidElement,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
+import { createPortal } from "react-dom";
+import styled, { keyframes } from "styled-components";
 
 const wiggleAnimation = (amplitude: number, maxHeight: number) => keyframes`
   0% { transform: translateY(0) rotate(0deg); opacity: 0; }
@@ -33,7 +33,13 @@ const ParticleStyle = styled.div<{
   $amplitude: number;
   $maxHeight: number;
 }>`
-  font-family: SFRounded, ui-rounded, "SF Pro Rounded", Comic Sans MS, system-ui, sans-serif;
+  font-family:
+    SFRounded,
+    ui-rounded,
+    "SF Pro Rounded",
+    Comic Sans MS,
+    system-ui,
+    sans-serif;
 
   opacity: 0;
   pointer-events: none;
@@ -85,99 +91,97 @@ const Particle: React.FC<{
   );
 };
 
-export const ParticleEmitter = forwardRef(
-  (
-    { targetRef, symbol }: { targetRef: RefObject<HTMLElement>; symbol: string | Array<string> },
-    ref
-  ) => {
-    const [particles, setParticles] = useState<Record<string, JSX.Element>>({});
-    const [symbols] = useState(() => [symbol].flat());
-    const timerRef = useRef<ReturnType<typeof setTimeout>>();
+export const ParticleEmitter = forwardRef(function ParticleEmmitterWithRef(
+  { targetRef, symbol }: { targetRef: RefObject<HTMLElement>; symbol: string | Array<string> },
+  ref,
+) {
+  const [particles, setParticles] = useState<Record<string, JSX.Element>>({});
+  const [symbols] = useState(() => [symbol].flat());
+  const timerRef = useRef<ReturnType<typeof setTimeout>>();
 
-    const removeParticle = (id: string) => {
-      setParticles((prevParticles) => {
-        const newParticles = { ...prevParticles };
-        delete newParticles[id];
-        return newParticles;
-      });
-    };
+  const removeParticle = (id: string) => {
+    setParticles((prevParticles) => {
+      const newParticles = { ...prevParticles };
+      delete newParticles[id];
+      return newParticles;
+    });
+  };
 
-    const emitParticles = () => {
-      const target = targetRef.current;
+  const emitParticles = () => {
+    const target = targetRef.current;
 
-      if (!(target instanceof HTMLElement)) {
-        return;
-      }
+    if (!(target instanceof HTMLElement)) {
+      return;
+    }
 
-      // Add the animation to the target element
-      target.style.filter = "invert(1)";
-      target.style.outline = "3px dashed red";
-      target.style.outlineOffset = "4px";
-      target.style.transition = "filter 0s ease-out, outline 0s ease-out";
+    // Add the animation to the target element
+    target.style.filter = "invert(1)";
+    target.style.outline = "3px dashed red";
+    target.style.outlineOffset = "4px";
+    target.style.transition = "filter 0s ease-out, outline 0s ease-out";
 
-      clearTimeout(timerRef.current);
+    clearTimeout(timerRef.current);
 
-      setTimeout(() => {
-        target.style.transition = "filter 1s ease-out, outline 1s ease-out";
-        target.style.filter = "invert(0)";
-        target.style.outlineColor = "transparent";
-      }, 0);
+    setTimeout(() => {
+      target.style.transition = "filter 1s ease-out, outline 1s ease-out";
+      target.style.filter = "invert(0)";
+      target.style.outlineColor = "transparent";
+    }, 0);
 
-      timerRef.current = setTimeout(() => {
-        target.style.outline = "none";
-        target.style.filter = "none";
-        target.style.transition = "none";
-      }, 1000);
+    timerRef.current = setTimeout(() => {
+      target.style.outline = "none";
+      target.style.filter = "none";
+      target.style.transition = "none";
+    }, 1000);
 
-      const numParticles = Math.floor(randomBetween(4, 8));
-      const buttonRect = targetRef.current?.getBoundingClientRect();
+    const numParticles = Math.floor(randomBetween(4, 8));
+    const buttonRect = targetRef.current?.getBoundingClientRect();
 
-      for (let i = 0; i < numParticles; i++) {
-        const id = nanoid();
-        const size = randomBetween(20, 32);
-        const duration = randomBetween(0.5, 1.5);
-        const delay = randomBetween(0, 0.2);
-        const amplitude = randomBetween(-30, 30);
-        const maxHeight = randomBetween(50, 150);
-        const startX = buttonRect
-          ? buttonRect.left + randomBetween(-size / 2, buttonRect.width - size / 2)
-          : 0;
-        const startY = buttonRect ? buttonRect.top - size : 0;
+    for (let i = 0; i < numParticles; i++) {
+      const id = nanoid();
+      const size = randomBetween(20, 32);
+      const duration = randomBetween(0.5, 1.5);
+      const delay = randomBetween(0, 0.2);
+      const amplitude = randomBetween(-30, 30);
+      const maxHeight = randomBetween(50, 150);
+      const startX = buttonRect
+        ? buttonRect.left + randomBetween(-size / 2, buttonRect.width - size / 2)
+        : 0;
+      const startY = buttonRect ? buttonRect.top - size : 0;
 
-        const symbol = sample(symbols)!;
+      const symbol = sample(symbols)!;
 
-        const particleElement = (
-          <Particle
-            key={id}
-            id={id}
-            size={size}
-            duration={duration}
-            delay={delay}
-            startX={startX}
-            startY={startY}
-            amplitude={amplitude}
-            maxHeight={maxHeight}
-            onDone={removeParticle}
-          >
-            {symbol}
-          </Particle>
-        );
+      const particleElement = (
+        <Particle
+          key={id}
+          id={id}
+          size={size}
+          duration={duration}
+          delay={delay}
+          startX={startX}
+          startY={startY}
+          amplitude={amplitude}
+          maxHeight={maxHeight}
+          onDone={removeParticle}
+        >
+          {symbol}
+        </Particle>
+      );
 
-        setParticles((prevParticles) => ({ ...prevParticles, [id]: particleElement }));
-      }
-    };
+      setParticles((prevParticles) => ({ ...prevParticles, [id]: particleElement }));
+    }
+  };
 
-    const randomBetween = (min: number, max: number): number => {
-      return Math.random() * (max - min) + min;
-    };
+  const randomBetween = (min: number, max: number): number => {
+    return Math.random() * (max - min) + min;
+  };
 
-    useImperativeHandle(ref, () => ({
-      emitParticles,
-    }));
+  useImperativeHandle(ref, () => ({
+    emitParticles,
+  }));
 
-    return <>{Object.values(particles)}</>;
-  }
-);
+  return <>{Object.values(particles)}</>;
+});
 
 export const RenderIsExpensive = ({
   children,
@@ -191,10 +195,6 @@ export const RenderIsExpensive = ({
   const targetRef = useRef<HTMLElement>(null);
   const emitterRef = useRef<{ emitParticles: () => void }>(null);
 
-  if (!isValidElement(children)) {
-    return children;
-  }
-
   useEffect(() => {
     if (!firstRenderRef.current) {
       emitterRef.current?.emitParticles();
@@ -203,7 +203,11 @@ export const RenderIsExpensive = ({
     firstRenderRef.current = false;
   });
 
-  // @ts-ignore TODO
+  if (!isValidElement(children)) {
+    return children;
+  }
+
+  // @ts-expect-error ref type
   const childrenWithRef = cloneElement(children, { ref: targetRef });
 
   return (
@@ -212,7 +216,7 @@ export const RenderIsExpensive = ({
 
       {createPortal(
         <ParticleEmitter ref={emitterRef} targetRef={targetRef} symbol={symbol} />,
-        document.body
+        document.body,
       )}
     </>
   );
