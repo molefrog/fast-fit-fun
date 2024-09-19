@@ -41,6 +41,13 @@ const App = () => {
 };
 
 const Container = styled.div`
+  font-family:
+    SFRounded,
+    ui-rounded,
+    "SF Pro Rounded",
+    Comic Sans MS,
+    system-ui,
+    sans-serif;
   display: flex;
   gap: 8px;
 `;

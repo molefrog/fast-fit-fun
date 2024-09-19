@@ -50,8 +50,19 @@ type DemoProps = Partial<Options> & {
 export const Demo = React.memo(function Demo$({ nOfInstances, ...options }: DemoProps) {
   const instances = Array.from({ length: nOfInstances }).map(() => nanoid());
 
-  return instances.map((id) => <MultiplayerCursors key={id} renderOptions={options} />);
+  return instances.map((id) => <MultiplayerChannels key={id} renderOptions={options} />);
 });
+
+const MultiplayerChannels = ({ renderOptions }: { renderOptions: Partial<Options> }) => {
+  const [room, setRoom] = useState("r/general");
+
+  return (
+    <div>
+      <SelectRoom room={room} onSelectRoom={setRoom} />
+      <MultiplayerCursors key={room} room={room} renderOptions={renderOptions} />
+    </div>
+  );
+};
 
 const MultiplayerCursors = ({
   room,
@@ -216,6 +227,41 @@ const CurrentPlayer = forwardRef<HTMLDivElement, ComponentProps<"div"> & { $colo
     );
   },
 );
+
+interface SelectRoomProps {
+  room: string;
+  onSelectRoom: (room: string) => void;
+}
+
+const SelectRoom = ({ room, onSelectRoom }: SelectRoomProps) => {
+  const rooms = ["r/general", "r/react", "r/etc"];
+
+  return (
+    <RoomsNav>
+      {rooms.map((room_) => (
+        <RoomItem key={room_} active={room_ === room} onClick={() => onSelectRoom(room_)}>
+          {room_}
+        </RoomItem>
+      ))}
+    </RoomsNav>
+  );
+};
+
+const RoomsNav = styled.nav`
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+`;
+
+const RoomItem = styled.div<{ active: boolean }>`
+  cursor: pointer;
+  color: ${(props) => (props.active ? "black" : "gray")};
+  font-weight: ${(props) => (props.active ? "700" : "500")};
+  font-size: 20px;
+  &:hover {
+    text-decoration: underline;
+  }
+`;
 
 const CanvasContainer = styled.div`
   width: 100%;
