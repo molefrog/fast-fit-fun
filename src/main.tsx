@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Children, isValidElement, useCallback, useEffect, useMemo, useState } from "react";
 import ReactDOM from "react-dom/client";
 import styled from "styled-components";
-import { Redirect, Route, Switch, useLocation } from "wouter";
+import { Redirect, Route, Switch, SwitchProps, useLocation } from "wouter";
 import "./main.css";
 
 import { ExpensiveRenderDemo, MultiplayerDemo, usePlayerNameSES } from "./library";
@@ -9,9 +9,8 @@ import { ExpensiveRenderDemo, MultiplayerDemo, usePlayerNameSES } from "./librar
 const App = () => {
   return (
     <>
-      <KeyboardNavigation />
       <Container>
-        <Switch>
+        <SwitchWithKeyboardNavigation>
           <Route path="/multiplayer">
             <MultiplayerDemo nOfInstances={2} />
           </Route>
@@ -35,7 +34,7 @@ const App = () => {
           <Route>
             <Redirect to="/multiplayer" />
           </Route>
-        </Switch>
+        </SwitchWithKeyboardNavigation>
       </Container>
     </>
   );
@@ -46,39 +45,43 @@ const Container = styled.div`
   gap: 8px;
 `;
 
-const DEMOS = [
-  "/multiplayer",
-  "/expensive-render",
-  "/comments-memo",
-  "/comments",
-  "/rename-player",
-];
-
 /**
  * Allows navigating between demos using the arrow keys in dev mode
  */
-const KeyboardNavigation = () => {
-  const [startIndex] = useState(() => {
-    const index = DEMOS.indexOf(window.location.pathname + window.location.search);
-    return index === -1 ? 0 : index;
-  });
+const SwitchWithKeyboardNavigation = (props: SwitchProps) => {
+  const [children] = useState(() => Children.toArray(props.children));
 
-  const indexRef = useRef(startIndex);
-  const [, navigate] = useLocation();
+  const paths = useMemo(
+    () =>
+      children
+        .filter(isValidElement)
+        .map((child) => {
+          return (child as React.ReactElement<{ path: undefined | string }>).props.path!;
+        })
+        .filter(Boolean),
+    [children],
+  );
+
+  const [location, navigate] = useLocation();
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
-      const currentLocationIndex = indexRef.current;
-
-      if (event.key === "ArrowRight") {
-        indexRef.current = (currentLocationIndex + 1) % DEMOS.length;
-      } else if (event.key === "ArrowLeft") {
-        indexRef.current = (currentLocationIndex - 1 + DEMOS.length) % DEMOS.length;
+      let currentLocationIndex = paths.indexOf(location);
+      if (currentLocationIndex === -1) {
+        return (currentLocationIndex = 0);
       }
 
-      navigate(DEMOS[indexRef.current]);
+      let idx = 0;
+
+      if (event.key === "ArrowRight") {
+        idx = (currentLocationIndex + 1) % paths.length;
+      } else if (event.key === "ArrowLeft") {
+        idx = (currentLocationIndex - 1 + paths.length) % paths.length;
+      }
+
+      navigate(paths[idx]);
     },
-    [navigate],
+    [navigate, location, paths],
   );
 
   useEffect(() => {
@@ -89,7 +92,7 @@ const KeyboardNavigation = () => {
     };
   }, [handleKeyDown]);
 
-  return null;
+  return <Switch>{props.children}</Switch>;
 };
 
 const root = ReactDOM.createRoot(document.querySelector(".react-app")!);
