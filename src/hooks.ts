@@ -4,30 +4,9 @@ import { Events, Multiplayer } from "./Multiplayer"; // import your Multiplayer 
 
 export type UseMultiplayerHook = (room?: string) => Multiplayer;
 
-/** A. Instance is stored as a global variable
- * Cons:
- *  [-] resource is initialized when the script is evaluated
- *  [-] no isolation between multiple instances of the app
+/**  Scoped to the current component
  */
-const singletonClient: Multiplayer = new Multiplayer({ room: "init" });
-
-export const useMultiplayerA: UseMultiplayerHook = () => singletonClient; // ingore the room
-
-/** B. Lazy-initialized, stored as a global variable
- * Cons:
- *  [-] no isolation between multiple instances of the app
- */
-
-let globalClient: Multiplayer;
-
-export const useMultiplayerB: UseMultiplayerHook = (room): Multiplayer =>
-  (globalClient ||= new Multiplayer({ room }));
-
-/** B. Scoped to the current component
- * Cons:
- *  [-] creates an instance every time it is called, hence can only be called once
- */
-export const useMultiplayerC: UseMultiplayerHook = (room) => {
+export const useMultiplayer: UseMultiplayerHook = (room) => {
   const clientRef = useRef<Multiplayer>();
   const [client] = useState<Multiplayer>(() => {
     return (clientRef.current ||= new Multiplayer({ room }));

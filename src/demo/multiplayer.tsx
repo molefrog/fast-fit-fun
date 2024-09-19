@@ -21,7 +21,7 @@ import { nanoid } from "nanoid";
 import {
   UseMultiplayerHook,
   useConnectionStatus,
-  useMultiplayerC,
+  useMultiplayer,
   usePeopleConnected,
   usePlayerNameSES,
   usePositionUpdates,
@@ -34,7 +34,7 @@ interface Options {
 }
 
 const defaultOptions: Options = {
-  useMultiplayerHook: useMultiplayerC,
+  useMultiplayerHook: useMultiplayer,
   usePlayerNameHook: usePlayerNameSES,
   comments: false,
 };

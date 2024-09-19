@@ -1,17 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom/client";
 import styled from "styled-components";
-import { Route, Switch, useLocation } from "wouter";
+import { Redirect, Route, Switch, useLocation } from "wouter";
 import "./main.css";
 
-import {
-  CatDemo,
-  ExpensiveRenderDemo,
-  MultiplayerDemo,
-  useMultiplayerB,
-  useMultiplayerC,
-  usePlayerNameSES,
-} from "./library";
+import { ExpensiveRenderDemo, MultiplayerDemo, usePlayerNameSES } from "./library";
 
 const App = () => {
   return (
@@ -19,28 +12,12 @@ const App = () => {
       <KeyboardNavigation />
       <Container>
         <Switch>
+          <Route path="/multiplayer">
+            <MultiplayerDemo nOfInstances={2} />
+          </Route>
+
           <Route path="/expensive-render">
             <ExpensiveRenderDemo />
-          </Route>
-
-          <Route path="/is-this-my-cat">
-            <CatDemo memoize />
-          </Route>
-
-          <Route path="/singleplayer">
-            <MultiplayerDemo nOfInstances={1} useMultiplayerHook={useMultiplayerB} />
-          </Route>
-
-          <Route path="/singleplayer-double">
-            <MultiplayerDemo nOfInstances={2} room="my" useMultiplayerHook={useMultiplayerB} />
-          </Route>
-
-          <Route path="/multiplayer">
-            <MultiplayerDemo nOfInstances={2} room="my" useMultiplayerHook={useMultiplayerC} />
-          </Route>
-
-          <Route path="/rename-player">
-            <MultiplayerDemo nOfInstances={1} usePlayerNameHook={usePlayerNameSES} />
           </Route>
 
           <Route path="/comments-memo">
@@ -49,6 +26,14 @@ const App = () => {
 
           <Route path="/comments">
             <MultiplayerDemo nOfInstances={1} comments="use-event" />
+          </Route>
+
+          <Route path="/rename-player">
+            <MultiplayerDemo nOfInstances={1} usePlayerNameHook={usePlayerNameSES} />
+          </Route>
+
+          <Route>
+            <Redirect to="/multiplayer" />
           </Route>
         </Switch>
       </Container>
@@ -62,11 +47,8 @@ const Container = styled.div`
 `;
 
 const DEMOS = [
-  "/expensive-render",
-  "/is-this-my-cat",
-  "/singleplayer",
-  "/singleplayer-double",
   "/multiplayer",
+  "/expensive-render",
   "/comments-memo",
   "/comments",
   "/rename-player",
