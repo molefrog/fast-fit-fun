@@ -58,8 +58,8 @@ const MultiplayerChannels = ({ renderOptions }: { renderOptions: Partial<Options
 
   return (
     <div>
-      <SelectRoom room={room} onSelectRoom={setRoom} />
       <MultiplayerCursors key={room} room={room} renderOptions={renderOptions} />
+      <SelectRoom room={room} onSelectRoom={setRoom} />
     </div>
   );
 };

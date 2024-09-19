@@ -1,12 +1,14 @@
-import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import externalGlobals from "rollup-plugin-external-globals";
+import { defineConfig } from "vite";
 
 // https://vitejs.dev/config/
-export default defineConfig(({ command }) => {
+export default defineConfig(() => {
   let libraryOptions = {};
 
-  if (command === "build") {
+  if (process.env.LIBRARY!) {
+    console.log("Building library");
+
     libraryOptions = {
       define: {
         "process.env.NODE_ENV": '"production"',
